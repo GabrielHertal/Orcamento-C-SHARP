@@ -18,6 +18,7 @@ namespace Orçamento
         {
             InitializeComponent();
         }
+        //variaveis db, preenchelv, e formatar
         BancodeDados bancodedados = new BancodeDados();
         CarregarDados carregarDados = new CarregarDados();
         Formatar formatar = new Formatar();
