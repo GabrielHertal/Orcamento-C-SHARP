@@ -63,22 +63,22 @@ namespace Orçamento
         }
         public bool VerificaCPF(string documento)
         {
-            conectar();
             try
             {
+                conectar();
                 string sql = $"SELECT COUNT(*) FROM clientes WHERE documento = '{documento}'";
                 comando.Connection = conexao;
                 comando.CommandText = sql;
-                desconectar();
                 int count = Convert.ToInt32(comando.ExecuteScalar());
                 return count > 0;
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Erro ao verificar Documento no Banco de Dados: {e.Message}", "Erro ao verificar", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 desconectar();
+                MessageBox.Show($"Erro ao verificar Documento no Banco de Dados: {e.Message}", "Erro ao verificar", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
+
     }
 }

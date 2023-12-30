@@ -29,67 +29,117 @@
         private void InitializeComponent()
         {
             btn_clientes = new Button();
-            btn_orçamentos = new Button();
             btn_servicos = new Button();
-            btn_fazorcamento = new Button();
+            panel_lateral = new Panel();
+            btn_orcamentos = new Button();
+            btn_fazer_orcamentos = new Button();
+            panel_logo = new Panel();
+            panel_principal = new Panel();
+            panel_lateral.SuspendLayout();
             SuspendLayout();
             // 
             // btn_clientes
             // 
-            btn_clientes.Location = new Point(2, 300);
+            btn_clientes.Dock = DockStyle.Top;
+            btn_clientes.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btn_clientes.Location = new Point(0, 86);
             btn_clientes.Name = "btn_clientes";
-            btn_clientes.Size = new Size(220, 84);
+            btn_clientes.Size = new Size(250, 84);
             btn_clientes.TabIndex = 0;
             btn_clientes.Text = "Clientes";
             btn_clientes.UseVisualStyleBackColor = true;
-            // 
-            // btn_orçamentos
-            // 
-            btn_orçamentos.Location = new Point(2, 204);
-            btn_orçamentos.Name = "btn_orçamentos";
-            btn_orçamentos.Size = new Size(220, 84);
-            btn_orçamentos.TabIndex = 1;
-            btn_orçamentos.Text = "Orçamentos";
-            btn_orçamentos.UseVisualStyleBackColor = true;
+            btn_clientes.Click += btn_clientes_Click;
             // 
             // btn_servicos
             // 
-            btn_servicos.Location = new Point(2, 390);
+            btn_servicos.Dock = DockStyle.Top;
+            btn_servicos.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btn_servicos.Location = new Point(0, 254);
             btn_servicos.Name = "btn_servicos";
-            btn_servicos.Size = new Size(220, 84);
+            btn_servicos.Size = new Size(250, 84);
             btn_servicos.TabIndex = 2;
             btn_servicos.Text = "Serviços";
             btn_servicos.UseVisualStyleBackColor = true;
             // 
-            // btn_fazorcamento
+            // panel_lateral
             // 
-            btn_fazorcamento.Location = new Point(2, 105);
-            btn_fazorcamento.Name = "btn_fazorcamento";
-            btn_fazorcamento.Size = new Size(220, 93);
-            btn_fazorcamento.TabIndex = 3;
-            btn_fazorcamento.Text = "Fazer orçamento";
-            btn_fazorcamento.UseVisualStyleBackColor = true;
+            panel_lateral.BackColor = SystemColors.ActiveCaptionText;
+            panel_lateral.Controls.Add(btn_orcamentos);
+            panel_lateral.Controls.Add(btn_servicos);
+            panel_lateral.Controls.Add(btn_fazer_orcamentos);
+            panel_lateral.Controls.Add(btn_clientes);
+            panel_lateral.Controls.Add(panel_logo);
+            panel_lateral.Dock = DockStyle.Left;
+            panel_lateral.Location = new Point(0, 0);
+            panel_lateral.Name = "panel_lateral";
+            panel_lateral.Size = new Size(250, 681);
+            panel_lateral.TabIndex = 4;
+            // 
+            // btn_orcamentos
+            // 
+            btn_orcamentos.Dock = DockStyle.Top;
+            btn_orcamentos.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btn_orcamentos.Location = new Point(0, 338);
+            btn_orcamentos.Name = "btn_orcamentos";
+            btn_orcamentos.Size = new Size(250, 84);
+            btn_orcamentos.TabIndex = 5;
+            btn_orcamentos.Text = "Orçamentos";
+            btn_orcamentos.UseVisualStyleBackColor = true;
+            // 
+            // btn_fazer_orcamentos
+            // 
+            btn_fazer_orcamentos.Dock = DockStyle.Top;
+            btn_fazer_orcamentos.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btn_fazer_orcamentos.Location = new Point(0, 170);
+            btn_fazer_orcamentos.Name = "btn_fazer_orcamentos";
+            btn_fazer_orcamentos.Size = new Size(250, 84);
+            btn_fazer_orcamentos.TabIndex = 6;
+            btn_fazer_orcamentos.Text = "Fazer Orçamentos";
+            btn_fazer_orcamentos.UseVisualStyleBackColor = true;
+            // 
+            // panel_logo
+            // 
+            panel_logo.Dock = DockStyle.Top;
+            panel_logo.Location = new Point(0, 0);
+            panel_logo.Name = "panel_logo";
+            panel_logo.Size = new Size(250, 86);
+            panel_logo.TabIndex = 0;
+            // 
+            // panel_principal
+            // 
+            panel_principal.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panel_principal.AutoSize = true;
+            panel_principal.Location = new Point(252, 0);
+            panel_principal.Name = "panel_principal";
+            panel_principal.Size = new Size(860, 678);
+            panel_principal.TabIndex = 5;
             // 
             // Form_Menu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1111, 621);
-            Controls.Add(btn_fazorcamento);
-            Controls.Add(btn_servicos);
-            Controls.Add(btn_orçamentos);
-            Controls.Add(btn_clientes);
+            ClientSize = new Size(1114, 681);
+            Controls.Add(panel_principal);
+            Controls.Add(panel_lateral);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "Form_Menu";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Menu";
+            Load += Form_Menu_Load;
+            panel_lateral.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private Button btn_clientes;
-        private Button btn_orçamentos;
         private Button btn_servicos;
-        private Button btn_fazorcamento;
+        private Panel panel_lateral;
+        private Panel panel_logo;
+        private Button btn_fazer_orcamentos;
+        private Button btn_orcamentos;
+        private Panel panel_principal;
     }
 }
