@@ -12,7 +12,7 @@ namespace Orçamento
         {
             foreach(Control controle in formulario.Controls) 
             {
-                if(controle is TextBox && controle is MaskedTextBox)
+                if(controle is TextBox || controle is MaskedTextBox)
                 {
                     controle.Enabled = true;
                 }
@@ -22,7 +22,7 @@ namespace Orçamento
         {
             foreach (Control controle in formulario.Controls)
             {
-                if (controle is TextBox && controle is MaskedTextBox)
+                if (controle is TextBox || controle is MaskedTextBox)
                 {
                     controle.Enabled = false;
                 }

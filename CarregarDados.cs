@@ -11,8 +11,8 @@ namespace Orçamento
     {
         BancodeDados bancodedados = new BancodeDados();
 
-       public void PreencheListView(ListView listView)
-        {
+       public void PreencheListViewClientes(ListView listView)
+       {
             BancodeDados bancodedados = new BancodeDados();
             try
             {
@@ -20,7 +20,6 @@ namespace Orçamento
                 ListView listView1 = new ListView();
                 string sql = "SELECT * FROM clientes WHERE ativo = 1 ORDER BY id_cliente";
                 bancodedados.Consultar(sql);
-
                 listView.Items.Clear();
                 while(bancodedados.dados.Read())
                 {
@@ -39,6 +38,33 @@ namespace Orçamento
             {
                 bancodedados.desconectar();
             }
-        }
+       }
+       public void PreencheListViewServicos(ListView listView) 
+       {
+            try
+            {
+                bancodedados.conectar();
+                ListView listview2 = new ListView();
+                string sql = "SELECT * FROM servicos WHERE ativo = 1 ORDER BY id_servicos";
+                bancodedados.Consultar(sql);
+                listView.Items.Clear();
+                while(bancodedados.dados.Read())
+                {
+                    ListViewItem item = new ListViewItem(bancodedados.dados["id_servicos"].ToString());
+                    item.SubItems.Add(bancodedados.dados["nome_servico"].ToString());
+                    item.SubItems.Add(bancodedados.dados["preco_padrao"].ToString());
+                    item.SubItems.Add(bancodedados.dados["descricao"].ToString());
+                    listView.Items.Add(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao carregarr dados: {ex.Message}", "Erro", MessageBoxButtons.OK,MessageBoxIcon.Error);
+            }
+            finally
+            {
+                bancodedados.desconectar();
+            }
+       }
     }
 }

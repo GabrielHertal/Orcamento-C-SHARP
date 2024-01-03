@@ -60,6 +60,7 @@
             btn_servicos.TabIndex = 2;
             btn_servicos.Text = "Serviços";
             btn_servicos.UseVisualStyleBackColor = true;
+            btn_servicos.Click += btn_servicos_Click;
             // 
             // panel_lateral
             // 
@@ -72,7 +73,7 @@
             panel_lateral.Dock = DockStyle.Left;
             panel_lateral.Location = new Point(0, 0);
             panel_lateral.Name = "panel_lateral";
-            panel_lateral.Size = new Size(250, 681);
+            panel_lateral.Size = new Size(250, 736);
             panel_lateral.TabIndex = 4;
             // 
             // btn_orcamentos
@@ -111,14 +112,14 @@
             panel_principal.AutoSize = true;
             panel_principal.Location = new Point(252, 0);
             panel_principal.Name = "panel_principal";
-            panel_principal.Size = new Size(860, 678);
+            panel_principal.Size = new Size(960, 733);
             panel_principal.TabIndex = 5;
             // 
             // Form_Menu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1114, 681);
+            ClientSize = new Size(1214, 736);
             Controls.Add(panel_principal);
             Controls.Add(panel_lateral);
             FormBorderStyle = FormBorderStyle.FixedSingle;

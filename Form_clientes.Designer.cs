@@ -51,9 +51,9 @@
             lv_clientes.Font = new Font("Segoe UI", 10F);
             lv_clientes.FullRowSelect = true;
             lv_clientes.GridLines = true;
-            lv_clientes.Location = new Point(12, 213);
+            lv_clientes.Location = new Point(14, 215);
             lv_clientes.Name = "lv_clientes";
-            lv_clientes.Size = new Size(678, 414);
+            lv_clientes.Size = new Size(676, 414);
             lv_clientes.TabIndex = 0;
             lv_clientes.UseCompatibleStateImageBehavior = false;
             lv_clientes.View = View.Details;
@@ -66,16 +66,19 @@
             // Nome
             // 
             Nome.Text = "NOME";
+            Nome.TextAlign = HorizontalAlignment.Center;
             Nome.Width = 175;
             // 
             // Documento
             // 
             Documento.Text = "DOCUMENTO";
+            Documento.TextAlign = HorizontalAlignment.Center;
             Documento.Width = 300;
             // 
             // Contato
             // 
             Contato.Text = "CONTATO";
+            Contato.TextAlign = HorizontalAlignment.Center;
             Contato.Width = 150;
             // 
             // txt_nome
@@ -100,7 +103,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label2.Location = new Point(12, 81);
+            label2.Location = new Point(12, 80);
             label2.Name = "label2";
             label2.Size = new Size(165, 19);
             label2.TabIndex = 4;
@@ -109,7 +112,7 @@
             // txt_documento
             // 
             txt_documento.Font = new Font("Segoe UI", 10F);
-            txt_documento.Location = new Point(183, 75);
+            txt_documento.Location = new Point(183, 77);
             txt_documento.Name = "txt_documento";
             txt_documento.Size = new Size(145, 25);
             txt_documento.TabIndex = 3;
@@ -181,7 +184,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(703, 639);
+            ClientSize = new Size(704, 641);
             Controls.Add(btn_salvar);
             Controls.Add(btn_excluir);
             Controls.Add(btn_alterar);

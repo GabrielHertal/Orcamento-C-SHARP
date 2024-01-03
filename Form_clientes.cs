@@ -24,9 +24,9 @@ namespace Orçamento
         Formatar formatar = new Formatar();
         private void Form_clientes_Load(object sender, EventArgs e)
         {
-            carregarDados.PreencheListView(lv_clientes);
+            carregarDados.PreencheListViewClientes(lv_clientes);
             bancodedados.desconectar();
-            formatar.desativar(this);
+            WindowState = FormWindowState.Maximized;
         }
         private void btn_novo_Click(object sender, EventArgs e)
         {
@@ -53,7 +53,7 @@ namespace Orçamento
                     string sql = $"INSERT INTO clientes (nome, documento, contato) VALUES ('{nome}', '{documento}', '{contato}')";
                     bancodedados.executar(sql);
                     bancodedados.desconectar();
-                    carregarDados.PreencheListView(lv_clientes);
+                    carregarDados.PreencheListViewClientes(lv_clientes);
                 }
             }
         }
@@ -110,7 +110,10 @@ namespace Orçamento
                 MessageBox.Show("Cliente alterado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 bancodedados.executar(sql);
                 bancodedados.desconectar();
-                carregarDados.PreencheListView(lv_clientes);
+                txt_nome.Text = "";
+                txt_documento.Text = "";
+                masked_txt_contato.Text = "";
+                carregarDados.PreencheListViewClientes(lv_clientes);
             }
         }
     }
