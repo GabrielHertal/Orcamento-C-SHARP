@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -82,33 +83,26 @@ namespace Orçamento
         private void btn_novo_Click(object sender, EventArgs e)
         {
             string servico = txt_servico.Text;
-           try
-           {
-                decimal valorservico = decimal.Parse(txt_valor.Text.Replace("R$", "").Replace(",", "."), System.Globalization.CultureInfo.InvariantCulture);
-
-                string descricao = txt_descricao.Text;
-
-                if (servico == "")
-                {
-                    MessageBox.Show("Existem campos vazios, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                }
-                else
-                {
-                    bancodedados.conectar();
-                    string sql = $"INSERT INTO servicos (nome_servico, preco_padrao, descricao) VALUES ('{servico}', '{valorservico}', '{descricao}')";
-                    bancodedados.executar(sql);
-                    bancodedados.desconectar();
-                    carregarDados.PreencheListViewServicos(lv_servicos);
-                }
-            }
-            catch (FormatException)
+            string valorTexto = txt_valor.Text.Replace("R$", "").Replace(",", ".");
+            decimal valorservico = decimal.Parse(valorTexto, CultureInfo.InvariantCulture);
+            string descricao = txt_descricao.Text;
+            if (servico == "")
             {
-                MessageBox.Show("Formato inválido para o campo 'Valor do Serviço!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Existem campos vazios, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                bancodedados.conectar();
+                string valorFormatado = valorservico.ToString(CultureInfo.InvariantCulture);
+                string sql = $"INSERT INTO servicos (nome_servico, preco_padrao, descricao) VALUES ('{servico}', '{valorFormatado}', '{descricao}')";
+                bancodedados.executar(sql);
+                bancodedados.desconectar();
+                carregarDados.PreencheListViewServicos(lv_servicos);
             }
         }
         private void btn_alterar_Click(object sender, EventArgs e)
         {
-            if(lv_servicos.SelectedItems.Count == 0)
+            if (lv_servicos.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Selecione um serviço, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
@@ -117,6 +111,11 @@ namespace Orçamento
             txt_servico.Text = lv_servicos.Items[linha].SubItems[1].Text;
             txt_valor.Text = lv_servicos.Items[linha].SubItems[2].Text;
             txt_descricao.Text = lv_servicos.Items[linha].SubItems[3].Text;
+        }
+
+        private void btn_excluir_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

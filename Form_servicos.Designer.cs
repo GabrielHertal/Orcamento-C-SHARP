@@ -41,9 +41,9 @@
             lv_servicos = new ListView();
             ID = new ColumnHeader();
             nome = new ColumnHeader();
+            valorservio = new ColumnHeader();
             descricao = new ColumnHeader();
             panel1 = new Panel();
-            valorservio = new ColumnHeader();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -136,6 +136,7 @@
             btn_excluir.TabIndex = 11;
             btn_excluir.Text = "EXCLUIR";
             btn_excluir.UseVisualStyleBackColor = true;
+            btn_excluir.Click += btn_excluir_Click;
             // 
             // btn_salvar
             // 
@@ -171,6 +172,12 @@
             nome.TextAlign = HorizontalAlignment.Center;
             nome.Width = 210;
             // 
+            // valorservio
+            // 
+            valorservio.Text = "VALOR";
+            valorservio.TextAlign = HorizontalAlignment.Center;
+            valorservio.Width = 80;
+            // 
             // descricao
             // 
             descricao.Text = "DESCRIÇÃO";
@@ -197,12 +204,6 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(704, 641);
             panel1.TabIndex = 14;
-            // 
-            // valorservio
-            // 
-            valorservio.Text = "VALOR";
-            valorservio.TextAlign = HorizontalAlignment.Center;
-            valorservio.Width = 80;
             // 
             // Form_Servicos
             // 
