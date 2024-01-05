@@ -147,6 +147,7 @@
             btn_salvar.TabIndex = 12;
             btn_salvar.Text = "SALVAR";
             btn_salvar.UseVisualStyleBackColor = true;
+            btn_salvar.Click += btn_salvar_Click;
             // 
             // lv_servicos
             // 

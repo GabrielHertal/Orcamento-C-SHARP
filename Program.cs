@@ -1,5 +1,6 @@
 namespace Orçamento
-{
+{ 
+
     internal static class Program
     {
         /// <summary>

@@ -97,6 +97,7 @@
             btn_fazer_orcamentos.TabIndex = 6;
             btn_fazer_orcamentos.Text = "Fazer Orçamentos";
             btn_fazer_orcamentos.UseVisualStyleBackColor = true;
+            btn_fazer_orcamentos.Click += btn_fazer_orcamentos_Click;
             // 
             // panel_logo
             // 

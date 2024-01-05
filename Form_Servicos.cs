@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FirebirdSql.Data.FirebirdClient;
 
 namespace Orçamento
 {
@@ -21,6 +22,7 @@ namespace Orçamento
         CarregarDados carregarDados = new CarregarDados();
         Formatar formatar = new Formatar();
         private string _valor;
+        //função preenche moeda textbox
         private void txt_valor_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!Char.IsDigit(e.KeyChar) && e.KeyChar != Convert.ToChar(Keys.Back))
@@ -40,7 +42,6 @@ namespace Orçamento
             _valor = txt_valor.Text.Replace("R$", "");
             txt_valor.Text = string.Format("{0:C}", Convert.ToDouble(_valor));
         }
-        //função preenche moeda textbox
         private void txt_valor_KeyUp(object sender, KeyEventArgs e)
         {
             _valor = txt_valor.Text.Replace("R$", "").Replace(",", "").Replace(" ", "").Replace("00,", "");
@@ -98,6 +99,9 @@ namespace Orçamento
                 bancodedados.executar(sql);
                 bancodedados.desconectar();
                 carregarDados.PreencheListViewServicos(lv_servicos);
+                txt_descricao.Text = "";
+                txt_servico.Text = "";
+                txt_valor.Text = "R$ 0,00";
             }
         }
         private void btn_alterar_Click(object sender, EventArgs e)
@@ -112,10 +116,56 @@ namespace Orçamento
             txt_valor.Text = lv_servicos.Items[linha].SubItems[2].Text;
             txt_descricao.Text = lv_servicos.Items[linha].SubItems[3].Text;
         }
-
         private void btn_excluir_Click(object sender, EventArgs e)
         {
-
+            DialogResult resultado = MessageBox.Show("Deseja realmente excluir este serviço?!", "AVISO", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (resultado == DialogResult.No)
+            {
+                return;
+            }
+            else if (lv_servicos.SelectedItems.Count > 0)
+            {
+                int itemselecionado = lv_servicos.SelectedItems[0].Index;
+                int indiceselecionado = Convert.ToInt32(lv_servicos.Items[itemselecionado].Text);
+                bancodedados.conectar();
+                string sql = $"UPDATE servicos SET ativo = 2 WHERE id_servicos = @ID";
+                FbCommand comando = new FbCommand(sql, bancodedados.conexao);
+                comando.Parameters.AddWithValue("@ID", indiceselecionado);
+                comando.ExecuteNonQuery();
+                bancodedados.desconectar();
+                lv_servicos.Items.RemoveAt(itemselecionado);
+            }
+            else
+            {
+                MessageBox.Show("Selecione um Serviço!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+        private void btn_salvar_Click(object sender, EventArgs e)
+        {
+            string servico = txt_servico.Text;
+            string valorTexto = txt_valor.Text.Replace("R$", "").Replace(",", ".");
+            decimal valorservico = decimal.Parse(valorTexto, CultureInfo.InvariantCulture);
+            string descricao = txt_descricao.Text;
+            if(servico == "")
+            {
+                MessageBox.Show("Existem campos vazios, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                bancodedados.conectar();
+                int itemselecionado = lv_servicos.SelectedItems[0].Index;
+                int indiceselecionado = Convert.ToInt32(lv_servicos.Items[itemselecionado].Text);
+                string valortexto = valorservico.ToString(CultureInfo.InvariantCulture);
+                string sql = $"UPDATE servicos SET nome_servico = '{servico}', preco_padrao = '{valortexto}', descricao = '{descricao}' WHERE id_servicos = @ID";
+                FbCommand comando = new FbCommand(sql, bancodedados.conexao);
+                comando.Parameters.AddWithValue("@ID", indiceselecionado);
+                comando.ExecuteNonQuery();
+                bancodedados.desconectar();
+                carregarDados.PreencheListViewServicos(lv_servicos);
+                txt_descricao.Text = "";
+                txt_servico.Text = "";
+                txt_valor.Text = "R$ 0,00";
+            }
         }
     }
 }

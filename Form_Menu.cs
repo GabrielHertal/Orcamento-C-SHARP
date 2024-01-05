@@ -30,7 +30,7 @@ namespace Orçamento
         private void Form_Menu_Load(object sender, EventArgs e)
         {
         }
-        
+
 
         private void btn_clientes_Click(object sender, EventArgs e)
         {
@@ -41,6 +41,11 @@ namespace Orçamento
         private void btn_servicos_Click(object sender, EventArgs e)
         {
             OpenChildForm(new Form_Servicos());
+        }
+
+        private void btn_fazer_orcamentos_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Form_fazerorcamento());
         }
     }
 }
