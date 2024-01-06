@@ -109,11 +109,11 @@
             // 
             // panel_principal
             // 
-            panel_principal.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             panel_principal.AutoSize = true;
-            panel_principal.Location = new Point(252, 0);
+            panel_principal.Dock = DockStyle.Fill;
+            panel_principal.Location = new Point(250, 0);
             panel_principal.Name = "panel_principal";
-            panel_principal.Size = new Size(960, 733);
+            panel_principal.Size = new Size(964, 736);
             panel_principal.TabIndex = 5;
             // 
             // Form_Menu

@@ -146,7 +146,7 @@ namespace Orçamento
             string valorTexto = txt_valor.Text.Replace("R$", "").Replace(",", ".");
             decimal valorservico = decimal.Parse(valorTexto, CultureInfo.InvariantCulture);
             string descricao = txt_descricao.Text;
-            if(servico == "")
+            if (servico == "")
             {
                 MessageBox.Show("Existem campos vazios, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
@@ -166,6 +166,11 @@ namespace Orçamento
                 txt_servico.Text = "";
                 txt_valor.Text = "R$ 0,00";
             }
+        }
+
+        private void txt_valor_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

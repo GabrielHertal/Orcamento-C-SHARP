@@ -10,7 +10,7 @@ namespace Orçamento
     public class CarregarDados
     {
         BancodeDados bancodedados = new BancodeDados();
-
+        //preenche listview dos clientes
        public void PreencheListViewClientes(ListView listView)
        {
             BancodeDados bancodedados = new BancodeDados();
@@ -39,6 +39,7 @@ namespace Orçamento
                 bancodedados.desconectar();
             }
        }
+       //preenche o listview do servicos 
        public void PreencheListViewServicos(ListView listView) 
        {
             try
@@ -66,5 +67,48 @@ namespace Orçamento
                 bancodedados.desconectar();
             }
        }
+        public void PreencheComboBoxServicos(ComboBox comboBox)
+        {
+            try
+            {
+                bancodedados.conectar();
+                string sql = "SELECT * FROM servicos WHERE ativo = 1 ORDER BY id_servicos";
+                bancodedados.Consultar(sql);
+                comboBox.Items.Clear();
+
+                while (bancodedados.dados.Read())
+                {
+                    string item = bancodedados.dados["nome_servico"].ToString();
+                    comboBox.Items.Add(item);
+                }
+
+                bancodedados.desconectar();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar dados: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        public void PreencheComboboxClientes(ComboBox combobox)
+        {
+            try
+            {
+                bancodedados.conectar();
+                string sql = "SELECT * FROM clientes WHERE ativo = 1 ORDER BY id_cliente";
+                bancodedados.Consultar(sql);
+                combobox.Items.Clear();
+                while (bancodedados.dados.Read())
+                {
+                    string item = bancodedados.dados["nome"].ToString();
+                    combobox.Items.Add(item);
+                }
+                bancodedados.desconectar();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar dados: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
     }
 }

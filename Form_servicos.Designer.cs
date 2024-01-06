@@ -83,6 +83,7 @@
             txt_valor.Size = new Size(152, 25);
             txt_valor.TabIndex = 2;
             txt_valor.Text = "R$ 0,00";
+            txt_valor.TextChanged += txt_valor_TextChanged;
             txt_valor.KeyPress += txt_valor_KeyPress;
             txt_valor.KeyUp += txt_valor_KeyUp;
             txt_valor.Leave += txt_valor_Leave;
