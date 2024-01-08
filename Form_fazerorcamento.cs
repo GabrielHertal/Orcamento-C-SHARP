@@ -214,7 +214,7 @@ namespace Orçamento
         {
             decimal valorAtual = ObterValorTotal();
             if (valorRemovido <= valortotaloriginal)
-            { 
+            {
                 valorAtual -= valorRemovido;
             }
             else
@@ -231,6 +231,11 @@ namespace Orçamento
                 return valorTotal;
             }
             return 0;
+        }
+
+        private void btn_finalizaorcamento_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

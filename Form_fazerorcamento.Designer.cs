@@ -56,6 +56,8 @@
             label10 = new Label();
             txt_total = new TextBox();
             label11 = new Label();
+            btn_editaorcamento = new Button();
+            btn_finalizaorcamento = new Button();
             SuspendLayout();
             // 
             // label1
@@ -240,7 +242,7 @@
             // 
             // btn_adicionar
             // 
-            btn_adicionar.Location = new Point(10, 181);
+            btn_adicionar.Location = new Point(12, 181);
             btn_adicionar.Name = "btn_adicionar";
             btn_adicionar.Size = new Size(368, 36);
             btn_adicionar.TabIndex = 17;
@@ -250,9 +252,9 @@
             // 
             // btn_remover
             // 
-            btn_remover.Location = new Point(386, 181);
+            btn_remover.Location = new Point(427, 181);
             btn_remover.Name = "btn_remover";
-            btn_remover.Size = new Size(407, 36);
+            btn_remover.Size = new Size(366, 36);
             btn_remover.TabIndex = 18;
             btn_remover.Text = "Remover Serviço";
             btn_remover.UseVisualStyleBackColor = true;
@@ -328,11 +330,32 @@
             label11.TabIndex = 23;
             label11.Text = "Total Serviços:";
             // 
+            // btn_editaorcamento
+            // 
+            btn_editaorcamento.Location = new Point(427, 375);
+            btn_editaorcamento.Name = "btn_editaorcamento";
+            btn_editaorcamento.Size = new Size(366, 36);
+            btn_editaorcamento.TabIndex = 25;
+            btn_editaorcamento.Text = "Editar Orçamento";
+            btn_editaorcamento.UseVisualStyleBackColor = true;
+            // 
+            // btn_finalizaorcamento
+            // 
+            btn_finalizaorcamento.Location = new Point(14, 375);
+            btn_finalizaorcamento.Name = "btn_finalizaorcamento";
+            btn_finalizaorcamento.Size = new Size(364, 36);
+            btn_finalizaorcamento.TabIndex = 26;
+            btn_finalizaorcamento.Text = "Finalizar Orçamento";
+            btn_finalizaorcamento.UseVisualStyleBackColor = true;
+            btn_finalizaorcamento.Click += btn_finalizaorcamento_Click;
+            // 
             // Form_fazerorcamento
             // 
             AutoScaleDimensions = new SizeF(8F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(805, 726);
+            Controls.Add(btn_finalizaorcamento);
+            Controls.Add(btn_editaorcamento);
             Controls.Add(txt_total);
             Controls.Add(label11);
             Controls.Add(txt_acrescimo);
@@ -397,5 +420,7 @@
         private Label label10;
         private TextBox txt_total;
         private Label label11;
+        private Button btn_editaorcamento;
+        private Button btn_finalizaorcamento;
     }
 }
