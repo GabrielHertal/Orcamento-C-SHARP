@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,12 +23,15 @@ namespace Orçamento
         CarregarDados carregarDados = new CarregarDados();
         Formatar formatar = new Formatar();
         FormatarValor formatavalor = new FormatarValor();
+        Form_ValoresServicos valoresservicos = new Form_ValoresServicos();
 
-        private decimal valortotaloriginal;
-        private decimal descontototal;
-        private decimal acrescimototal;
+        public decimal valortotaloriginal;
+        public decimal descontototal;
+        public decimal acrescimototal;
+        private List<Servico> listaServicos = new List<Servico>();
+
         private void Form_fazerorcamento_Load(object sender, EventArgs e)
-        {
+        { 
             carregarDados.PreencheComboBoxServicos(cbx_serviço);
             carregarDados.PreencheComboboxClientes(cbx_cliente);
         }
@@ -35,59 +39,57 @@ namespace Orçamento
         {
             string servico = cbx_serviço.Text;
             string tamanho = txt_tamanho.Text;
-            string valor = txt_total.Text;
             if (string.IsNullOrEmpty(servico) || string.IsNullOrEmpty(tamanho))
             {
                 MessageBox.Show("Informe o serviço e o tamanho!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
+
             string sql = $"SELECT id_servicos, nome_servico, preco_padrao FROM servicos WHERE nome_servico = '{servico}' ORDER BY id_servicos";
             bancodedados.conectar();
             bancodedados.Consultar(sql);
+
             if (bancodedados.dados.Read())
             {
-                string servicoId = bancodedados.dados["id_servicos"].ToString();
+                int servicoId = Convert.ToInt32(bancodedados.dados["id_servicos"]);
                 string nomeServico = bancodedados.dados["nome_servico"].ToString();
-                string precoPadrao = bancodedados.dados["preco_padrao"].ToString();
-                bool servicoJaAdicionado = lv_servicos.Items.Cast<ListViewItem>().Any(item => item.SubItems[0].Text == servicoId);
+                decimal precoPadrao = Convert.ToDecimal(bancodedados.dados["preco_padrao"]);
+
+                bool servicoJaAdicionado = listaServicos.Any(item => item.Id == servicoId);
+
                 if (servicoJaAdicionado)
                 {
                     MessageBox.Show("Serviço já adicionado!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
                 else
                 {
-                    ListViewItem novoItem = new ListViewItem(servicoId);
-                    novoItem.SubItems.Add(nomeServico);
-                    novoItem.SubItems.Add(tamanho);
-                    lv_servicos.Items.Add(novoItem);
-                    cbx_serviço.Text = "";
-                    txt_tamanho.Text = "";
-                    decimal preco;
-                    decimal tamanhoDecimal;
-                    if (decimal.TryParse(precoPadrao.Replace(".", "").Replace(",", "."), NumberStyles.AllowDecimalPoint,
-                        CultureInfo.InvariantCulture, out preco) && decimal.TryParse(tamanho, out tamanhoDecimal))
+                    Servico novoServico = new Servico (servicoId, nomeServico, Convert.ToInt32(Convert.ToDecimal(tamanho)), precoPadrao);
+                    using (Form_ValoresServicos valoresservicos = new Form_ValoresServicos())
                     {
-                        decimal soma = preco * tamanhoDecimal;
-                        decimal valorTotalAtual;
+                        valoresservicos.ValorOriginal = novoServico.ValorTotal;
+                        DialogResult result = valoresservicos.ShowDialog();
 
-                        if (decimal.TryParse(valor.Replace("R$ ", "").Replace(".", ","), out valorTotalAtual))
+                        if (result == DialogResult.OK)
                         {
-                            valorTotalAtual += soma;
-                            txt_total.Text = valorTotalAtual.ToString();
-                            valortotaloriginal = valorTotalAtual;
+                            novoServico.Desconto = valoresservicos.Desconto;
+                            novoServico.Acrescimo = valoresservicos.Acrescimo;
+                            novoServico.AtualizarTotal();
+                            valoresservicos.ValoresConfirmados += AtualizarTextBoxes;
+                            valoresservicos.ShowDialog();
+                            valoresservicos.ValoresConfirmados -= AtualizarTextBoxes;
+                            listaServicos.Add(novoServico);
+                            ListViewItem novoItem = new ListViewItem(novoServico.Id.ToString());
+                            novoItem.SubItems.Add(novoServico.Nome);
+                            novoItem.SubItems.Add(novoServico.Tamanho.ToString());
+                            novoItem.SubItems.Add(novoServico.Desconto.ToString("C2"));
+                            novoItem.SubItems.Add(novoServico.Acrescimo.ToString("C2"));
+                            novoItem.SubItems.Add(novoServico.Total.ToString("C2"));
+                            lv_servicos.Items.Add(novoItem);
+                            AtualizarTotalGeral();
                         }
-                        else
-                        {
-                            MessageBox.Show("Valor total inválido!", "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Preço ou tamanho inválido!", "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
-
             bancodedados.desconectar();
         }
         private void btn_remover_Click(object sender, EventArgs e)
@@ -183,6 +185,7 @@ namespace Orçamento
                 decimal.TryParse(txt_acrescimo.Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency,
                 CultureInfo.GetCultureInfo("pt-BR"), out acrescimo))
             {
+                
                 decimal total = valortotaloriginal - desconto + acrescimo;
                 txt_total.Text = total.ToString("C2", CultureInfo.GetCultureInfo("pt-BR"));
                 descontototal = desconto;
@@ -237,5 +240,35 @@ namespace Orçamento
         {
 
         }
+        private void AtualizarTotalGeral()
+        {
+            decimal totalgeral = 0;
+            foreach (Servico servico in listaServicos)
+            {
+                totalgeral += servico.Total;
+            }
+            txt_total.Text = (totalgeral - descontototal + acrescimototal).ToString("C2", CultureInfo.GetCultureInfo("pt-BR"));
+        }
+        private void ExibirFormValoresServicos(Servico servico)
+        {
+            using (Form_ValoresServicos formValores = new Form_ValoresServicos())
+            {
+                DialogResult result = formValores.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    servico.Desconto = formValores.Desconto;
+                    servico.Acrescimo = formValores.Acrescimo;
+                    servico.AtualizarTotal();
+                }
+            }
+        }
+        private void AtualizarTextBoxes(decimal valorOriginal, decimal desconto, decimal acrescimo)
+        {
+            txt_total.Text = valorOriginal.ToString("C2");
+            txt_desconto.Text = desconto.ToString("C2");
+            txt_acrescimo.Text = acrescimo.ToString("C2");
+            AtualizarTotalComDescontoOuAcrescimo();
+        }
+
     }
 }

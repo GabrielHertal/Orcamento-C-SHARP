@@ -58,6 +58,9 @@
             label11 = new Label();
             btn_editaorcamento = new Button();
             btn_finalizaorcamento = new Button();
+            desconto = new ColumnHeader();
+            acrescimo = new ColumnHeader();
+            Total = new ColumnHeader();
             SuspendLayout();
             // 
             // label1
@@ -212,7 +215,7 @@
             // 
             // lv_servicos
             // 
-            lv_servicos.Columns.AddRange(new ColumnHeader[] { id, SERVIÇO, tamanho });
+            lv_servicos.Columns.AddRange(new ColumnHeader[] { id, SERVIÇO, tamanho, desconto, acrescimo, Total });
             lv_servicos.Font = new Font("Segoe UI", 10F);
             lv_servicos.FullRowSelect = true;
             lv_servicos.GridLines = true;
@@ -232,13 +235,13 @@
             // 
             SERVIÇO.Text = "SERVIÇO";
             SERVIÇO.TextAlign = HorizontalAlignment.Center;
-            SERVIÇO.Width = 436;
+            SERVIÇO.Width = 300;
             // 
             // tamanho
             // 
             tamanho.Text = "TAMANHO";
             tamanho.TextAlign = HorizontalAlignment.Center;
-            tamanho.Width = 300;
+            tamanho.Width = 150;
             // 
             // btn_adicionar
             // 
@@ -349,6 +352,24 @@
             btn_finalizaorcamento.UseVisualStyleBackColor = true;
             btn_finalizaorcamento.Click += btn_finalizaorcamento_Click;
             // 
+            // desconto
+            // 
+            desconto.Text = "DESCONTO";
+            desconto.TextAlign = HorizontalAlignment.Center;
+            desconto.Width = 80;
+            // 
+            // acrescimo
+            // 
+            acrescimo.Text = "ACRESCIMO";
+            acrescimo.TextAlign = HorizontalAlignment.Center;
+            acrescimo.Width = 90;
+            // 
+            // Total
+            // 
+            Total.Text = "TOTAL";
+            Total.TextAlign = HorizontalAlignment.Center;
+            Total.Width = 117;
+            // 
             // Form_fazerorcamento
             // 
             AutoScaleDimensions = new SizeF(8F, 17F);
@@ -422,5 +443,8 @@
         private Label label11;
         private Button btn_editaorcamento;
         private Button btn_finalizaorcamento;
+        private ColumnHeader desconto;
+        private ColumnHeader acrescimo;
+        private ColumnHeader Total;
     }
 }
