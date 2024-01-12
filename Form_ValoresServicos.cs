@@ -19,14 +19,12 @@ namespace Orçamento
         }
         FormatarValor formatavalor = new FormatarValor();
         Formatar formata = new Formatar();
-        public decimal valortotaloriginal;
         public decimal descontototal;
         public decimal acrescimototal;
         public event Action<decimal, decimal, decimal> ValoresConfirmados;
 
         private void Form_ValoresServicos_Load(object sender, EventArgs e)
         {
-
         }
         private void btn_confirmar_Click(object sender, EventArgs e)
         {
@@ -38,7 +36,11 @@ namespace Orçamento
             Acrescimo = Convert.ToDecimal(acrescimo);
             Desconto = Convert.ToDecimal(desconto);
             TotalFinal = Convert.ToDecimal(totalfinal);
-            ValoresConfirmados?.Invoke(ValorOriginal, Desconto, Acrescimo);
+
+            if (ValoresConfirmados != null)
+            {
+                ValoresConfirmados.Invoke(ValorOriginal, Desconto, Acrescimo);
+            }
             DialogResult = DialogResult.OK;
             Close();
         }

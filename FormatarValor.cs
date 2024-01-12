@@ -41,7 +41,10 @@ namespace Orçamento
             _valor = ((TextBox)sender).Text.Replace("R$", "").Replace(" ", "");
             if (double.TryParse(_valor, NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-BR"), out double valorConvertido))
             {
-                ((TextBox)sender).Text = string.Format("{0:C}", valorConvertido);
+                if (Math.Abs(valorConvertido) > 0.0001)
+                {
+                    ((TextBox)sender).Text = string.Format("{0:C}", valorConvertido);
+                }
             }
             else
             {

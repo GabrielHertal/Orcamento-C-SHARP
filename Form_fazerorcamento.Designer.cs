@@ -48,6 +48,9 @@
             id = new ColumnHeader();
             SERVIÇO = new ColumnHeader();
             tamanho = new ColumnHeader();
+            desconto = new ColumnHeader();
+            acrescimo = new ColumnHeader();
+            Total = new ColumnHeader();
             btn_adicionar = new Button();
             btn_remover = new Button();
             label9 = new Label();
@@ -58,9 +61,6 @@
             label11 = new Label();
             btn_editaorcamento = new Button();
             btn_finalizaorcamento = new Button();
-            desconto = new ColumnHeader();
-            acrescimo = new ColumnHeader();
-            Total = new ColumnHeader();
             SuspendLayout();
             // 
             // label1
@@ -243,6 +243,24 @@
             tamanho.TextAlign = HorizontalAlignment.Center;
             tamanho.Width = 150;
             // 
+            // desconto
+            // 
+            desconto.Text = "DESCONTO";
+            desconto.TextAlign = HorizontalAlignment.Center;
+            desconto.Width = 80;
+            // 
+            // acrescimo
+            // 
+            acrescimo.Text = "ACRESCIMO";
+            acrescimo.TextAlign = HorizontalAlignment.Center;
+            acrescimo.Width = 90;
+            // 
+            // Total
+            // 
+            Total.Text = "TOTAL";
+            Total.TextAlign = HorizontalAlignment.Center;
+            Total.Width = 117;
+            // 
             // btn_adicionar
             // 
             btn_adicionar.Location = new Point(12, 181);
@@ -267,16 +285,16 @@
             // 
             label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label9.Location = new Point(12, 347);
+            label9.Location = new Point(10, 347);
             label9.Name = "label9";
-            label9.Size = new Size(75, 19);
+            label9.Size = new Size(112, 19);
             label9.TabIndex = 19;
-            label9.Text = "Desconto:";
+            label9.Text = "Total Desconto:";
             // 
             // txt_desconto
             // 
             txt_desconto.Font = new Font("Segoe UI", 10F);
-            txt_desconto.Location = new Point(93, 344);
+            txt_desconto.Location = new Point(127, 344);
             txt_desconto.Name = "txt_desconto";
             txt_desconto.Size = new Size(135, 25);
             txt_desconto.TabIndex = 20;
@@ -290,7 +308,7 @@
             // txt_acrescimo
             // 
             txt_acrescimo.Font = new Font("Segoe UI", 10F);
-            txt_acrescimo.Location = new Point(328, 344);
+            txt_acrescimo.Location = new Point(394, 344);
             txt_acrescimo.Name = "txt_acrescimo";
             txt_acrescimo.Size = new Size(135, 25);
             txt_acrescimo.TabIndex = 22;
@@ -304,18 +322,18 @@
             // 
             label10.AutoSize = true;
             label10.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label10.Location = new Point(239, 347);
+            label10.Location = new Point(268, 347);
             label10.Name = "label10";
-            label10.Size = new Size(83, 19);
+            label10.Size = new Size(120, 19);
             label10.TabIndex = 21;
-            label10.Text = "Acrescimo:";
+            label10.Text = "Total Acrescimo:";
             // 
             // txt_total
             // 
             txt_total.Font = new Font("Segoe UI", 10F);
-            txt_total.Location = new Point(587, 344);
+            txt_total.Location = new Point(648, 344);
             txt_total.Name = "txt_total";
-            txt_total.Size = new Size(206, 25);
+            txt_total.Size = new Size(145, 25);
             txt_total.TabIndex = 24;
             txt_total.Text = "R$ 0,00";
             txt_total.TextChanged += txt_total_TextChanged;
@@ -327,7 +345,7 @@
             // 
             label11.AutoSize = true;
             label11.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label11.Location = new Point(474, 347);
+            label11.Location = new Point(536, 347);
             label11.Name = "label11";
             label11.Size = new Size(107, 19);
             label11.TabIndex = 23;
@@ -351,24 +369,6 @@
             btn_finalizaorcamento.Text = "Finalizar Orçamento";
             btn_finalizaorcamento.UseVisualStyleBackColor = true;
             btn_finalizaorcamento.Click += btn_finalizaorcamento_Click;
-            // 
-            // desconto
-            // 
-            desconto.Text = "DESCONTO";
-            desconto.TextAlign = HorizontalAlignment.Center;
-            desconto.Width = 80;
-            // 
-            // acrescimo
-            // 
-            acrescimo.Text = "ACRESCIMO";
-            acrescimo.TextAlign = HorizontalAlignment.Center;
-            acrescimo.Width = 90;
-            // 
-            // Total
-            // 
-            Total.Text = "TOTAL";
-            Total.TextAlign = HorizontalAlignment.Center;
-            Total.Width = 117;
             // 
             // Form_fazerorcamento
             // 

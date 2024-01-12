@@ -23,7 +23,6 @@ namespace Orçamento
         CarregarDados carregarDados = new CarregarDados();
         Formatar formatar = new Formatar();
         FormatarValor formatavalor = new FormatarValor();
-        Form_ValoresServicos valoresservicos = new Form_ValoresServicos();
 
         public decimal valortotaloriginal;
         public decimal descontototal;
@@ -31,7 +30,7 @@ namespace Orçamento
         private List<Servico> listaServicos = new List<Servico>();
 
         private void Form_fazerorcamento_Load(object sender, EventArgs e)
-        { 
+        {
             carregarDados.PreencheComboBoxServicos(cbx_serviço);
             carregarDados.PreencheComboboxClientes(cbx_cliente);
         }
@@ -63,12 +62,11 @@ namespace Orçamento
                 }
                 else
                 {
-                    Servico novoServico = new Servico (servicoId, nomeServico, Convert.ToInt32(Convert.ToDecimal(tamanho)), precoPadrao);
+                    Servico novoServico = new Servico(servicoId, nomeServico, Convert.ToInt32(Convert.ToDecimal(tamanho)), precoPadrao);
                     using (Form_ValoresServicos valoresservicos = new Form_ValoresServicos())
                     {
                         valoresservicos.ValorOriginal = novoServico.ValorTotal;
                         DialogResult result = valoresservicos.ShowDialog();
-
                         if (result == DialogResult.OK)
                         {
                             novoServico.Desconto = valoresservicos.Desconto;
@@ -85,7 +83,7 @@ namespace Orçamento
                             novoItem.SubItems.Add(novoServico.Acrescimo.ToString("C2"));
                             novoItem.SubItems.Add(novoServico.Total.ToString("C2"));
                             lv_servicos.Items.Add(novoItem);
-                            AtualizarTotalGeral();
+                            AtualizarTotais();
                         }
                     }
                 }
@@ -100,7 +98,6 @@ namespace Orçamento
                 return;
             }
             DialogResult resposta = MessageBox.Show("Deseja realmente excluir este Serviço?", "Confirmação de exclusão", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
             if (resposta == DialogResult.Yes)
             {
                 int linha = lv_servicos.SelectedIndices[0];
@@ -170,11 +167,11 @@ namespace Orçamento
         }
         private void txt_desconto_TextChanged(object sender, EventArgs e)
         {
-            AtualizarTotalComDescontoOuAcrescimo();
+          AtualizarTotalComDescontoOuAcrescimo();
         }
         private void txt_acrescimo_TextChanged(object sender, EventArgs e)
         {
-            AtualizarTotalComDescontoOuAcrescimo();
+          AtualizarTotalComDescontoOuAcrescimo();
         }
         private void AtualizarTotalComDescontoOuAcrescimo()
         {
@@ -185,9 +182,7 @@ namespace Orçamento
                 decimal.TryParse(txt_acrescimo.Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency,
                 CultureInfo.GetCultureInfo("pt-BR"), out acrescimo))
             {
-                
-                decimal total = valortotaloriginal - desconto + acrescimo;
-                txt_total.Text = total.ToString("C2", CultureInfo.GetCultureInfo("pt-BR"));
+                CalcularTotaisListView(); 
                 descontototal = desconto;
                 acrescimototal = acrescimo;
             }
@@ -269,6 +264,24 @@ namespace Orçamento
             txt_acrescimo.Text = acrescimo.ToString("C2");
             AtualizarTotalComDescontoOuAcrescimo();
         }
+        private void CalcularTotaisListView()
+        {
+            decimal totalGeral = 0;
 
+            foreach (ListViewItem item in lv_servicos.Items)
+            {
+                decimal total;
+
+                if (decimal.TryParse(item.SubItems[5].Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-BR"), out total))
+                {
+                    totalGeral += total;
+                }
+            }
+            txt_total.Text = totalGeral.ToString("C2", CultureInfo.GetCultureInfo("pt-BR"));
+        }
+        private void AtualizarTotais()
+        {
+            CalcularTotaisListView();
+        }
     }
 }
