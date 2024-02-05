@@ -21,14 +21,12 @@ namespace Orçamento
         }
         BancodeDados bancodedados = new BancodeDados();
         CarregarDados carregarDados = new CarregarDados();
-        Formatar formatar = new Formatar();
         FormatarValor formatavalor = new FormatarValor();
 
         public decimal valortotaloriginal;
         public decimal descontototal;
         public decimal acrescimototal;
         private List<Servico> listaServicos = new List<Servico>();
-        public bool servicoadicionado = false;
 
         private void Form_fazerorcamento_Load(object sender, EventArgs e)
         {
@@ -47,19 +45,16 @@ namespace Orçamento
             string sql = $"SELECT id_servicos, nome_servico, preco_padrao FROM servicos WHERE nome_servico = '{servico}' ORDER BY id_servicos";
             bancodedados.conectar();
             bancodedados.Consultar(sql);
-
             if (bancodedados.dados.Read())
             {
                 int servicoId = Convert.ToInt32(bancodedados.dados["id_servicos"]);
                 string nomeServico = bancodedados.dados["nome_servico"].ToString();
                 decimal precoPadrao = Convert.ToDecimal(bancodedados.dados["preco_padrao"]);
 
-                servicoadicionado = listaServicos.Any(item => item.Id == servicoId);
-
-                if (servicoadicionado)
+                if (ServicoJaAdicionado(servico))
                 {
-                    MessageBox.Show("Serviço já adicionado!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); 
-
+                    MessageBox.Show("Este serviço já foi adicionado!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
                 }
                 else
                 {
@@ -81,6 +76,8 @@ namespace Orçamento
                             novoItem.SubItems.Add(novoServico.Acrescimo.ToString("C2"));
                             novoItem.SubItems.Add(novoServico.Total.ToString("C2"));
                             lv_servicos.Items.Add(novoItem);
+                            cbx_serviço.Text = "";
+                            txt_tamanho.Text = "";
                             CalcularTotaisListView();
                         }
                     }
@@ -106,10 +103,7 @@ namespace Orçamento
                     MessageBox.Show("Tamanho do serviço inválido!", "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                decimal valorRemovido = ObterValorServico(idservico) * tamanhoServico;
-
                 lv_servicos.Items.RemoveAt(linha);
-                servicoadicionado = listaServicos.Any(item => item.Id == idservico) is false;
                 CalcularTotaisListView();
                 MessageBox.Show("Serviço removido com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -191,51 +185,36 @@ namespace Orçamento
                 MessageBox.Show("Desconto ou Acrescimo inválido!", "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private decimal ObterValorServico(int idServico)
-        {
-            string sql = $"SELECT preco_padrao FROM servicos WHERE id_servicos = {idServico}";
-            bancodedados.conectar();
-            bancodedados.Consultar(sql);
-            if (bancodedados.dados.Read())
-            {
-                decimal valorServico;
-                if (decimal.TryParse(bancodedados.dados["preco_padrao"].ToString(), out valorServico))
-                {
-                    bancodedados.desconectar();
-                    return valorServico;
-                }
-            }
-            bancodedados.desconectar();
-            return 0;
-        }
         private void btn_finalizaorcamento_Click(object sender, EventArgs e)
         {
-
+            //fazer
         }
         private void CalcularTotaisListView()
         {
             decimal totalGeral = 0;
             decimal descontototal = 0;
             decimal acrescimototal = 0;
-
             foreach (ListViewItem item in lv_servicos.Items)
             {
                 decimal total;
                 decimal desconto;
                 decimal acrescimo;
-
                 if ((decimal.TryParse(item.SubItems[5].Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-BR"), out total))&& 
                    (decimal.TryParse(item.SubItems[4].Text.Replace("R$", "").Replace(".",","), NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-br"), out acrescimo)&& 
                    (decimal.TryParse(item.SubItems[3].Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-br"), out desconto)))) 
-                   {
+                {
                     descontototal += desconto;
                     acrescimototal += acrescimo;
                     totalGeral += total;
-                   }
+                }
             }
             txt_acrescimo.Text = acrescimototal.ToString("C2", CultureInfo.GetCultureInfo("pt-BR"));
             txt_desconto.Text = descontototal.ToString("C2", CultureInfo.GetCultureInfo("pt-BR"));
             txt_total.Text = totalGeral.ToString("C2", CultureInfo.GetCultureInfo("pt-BR"));
+        }
+        private bool ServicoJaAdicionado(string nomeServico)
+        {
+            return lv_servicos.Items.Cast<ListViewItem>().Any(item => item.SubItems[1].Text == nomeServico);
         }
     }
 }
