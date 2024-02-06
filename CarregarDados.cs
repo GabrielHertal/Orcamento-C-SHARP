@@ -100,6 +100,7 @@ namespace Orçamento
                 while (bancodedados.dados.Read())
                 {
                     string item = bancodedados.dados["nome"].ToString();
+                    int id = Convert.ToInt32(bancodedados.dados["id_cliente"].ToString());
                     combobox.Items.Add(item);
                 }
                 bancodedados.desconectar();

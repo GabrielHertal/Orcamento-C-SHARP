@@ -206,6 +206,7 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(704, 641);
             panel1.TabIndex = 14;
+            panel1.Paint += panel1_Paint;
             // 
             // Form_Servicos
             // 

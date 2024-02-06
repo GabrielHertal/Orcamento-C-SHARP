@@ -187,7 +187,64 @@ namespace Orçamento
         }
         private void btn_finalizaorcamento_Click(object sender, EventArgs e)
         {
-            //fazer
+            string nomeorcamento = txt_nomeorcamento.Text;
+            string cliente = cbx_cliente.Text;
+            string i_data = dtp_inicio.Text;
+            string f_data = dtp_conclusao.Text;
+            string localizacao = txt_localização.Text;
+            string observacao = txt_observações.Text;
+            if (decimal.TryParse(txt_total.Text, NumberStyles.Currency, CultureInfo.CurrentUICulture, out decimal total_servicos));
+            if (decimal.TryParse(txt_acrescimo.Text, NumberStyles.Currency, CultureInfo.CurrentUICulture, out decimal acrescimototal));
+            if (decimal.TryParse(txt_desconto.Text, NumberStyles.Currency, CultureInfo.CurrentUICulture, out decimal descontototal));
+            int id_cliente = -1;
+                if (cbx_cliente.SelectedIndex == -1 || lv_servicos.Items.Count == 0)
+                {
+                    MessageBox.Show("Selecione um cliente ou adicione um serviço!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+            bancodedados.conectar();
+            string sql = $"SELECT id_cliente FROM clientes WHERE nome = '{cliente}' ORDER BY id_cliente";
+            bancodedados.Consultar(sql);
+                if (bancodedados.dados.Read())
+                {
+                    id_cliente = bancodedados.dados.GetInt32(0);
+                }
+            bancodedados.desconectar();
+
+            bancodedados.conectar();
+            string sqlinsertorcamento = $"INSERT INTO orcamentos (nome_orcamento, localizacao, observacao ,data_inicio, data_conclusao, fkid_cliente) " +
+                               $"VALUES ('{nomeorcamento}', '{localizacao}', '{observacao}' ,'{i_data}', '{f_data}', '{id_cliente}')";
+
+            bancodedados.executar(sqlinsertorcamento);
+            bancodedados.desconectar();
+
+            bancodedados.conectar();
+            string sqlObterIdorcamento = "SELECT GEN_ID(GEN_ORCAMENTO, 0) AS id_orcamento FROM RDB$DATABASE";
+            bancodedados.Consultar(sqlObterIdorcamento);
+            int id_orcamento;
+            if (bancodedados.dados.Read())
+            {
+                id_orcamento = Convert.ToInt32(bancodedados.dados["id_orcamento"].ToString());
+            }
+            bancodedados.desconectar();
+            
+            foreach (ListViewItem item in lv_servicos.Items)
+            {
+                id_orcamento = Convert.ToInt32(bancodedados.dados["id_orcamento"].ToString());
+                int id_servico = Convert.ToInt32(item.SubItems[0].Text);
+                decimal tamanho = Convert.ToInt32(item.SubItems[2].Text);
+                decimal desconto_unit = Convert.ToDecimal(item.SubItems[3].Text.Replace("R$", "").Replace(".", ","), CultureInfo.GetCultureInfo("pt-BR"));
+                decimal acrescimo_unit = Convert.ToDecimal(item.SubItems[4].Text.Replace("R$", "").Replace(".", ","), CultureInfo.GetCultureInfo("pt-BR"));
+                decimal total_unit = Convert.ToDecimal(item.SubItems[5].Text.Replace("R$", "").Replace(".", ","), CultureInfo.GetCultureInfo("pt-BR"));
+                bancodedados.conectar();
+                string sqlinsertitemorcamento = $"INSERT INTO itens_orcamento(id_item_orcamento, fk_id_orcamento, descricao, tamanho, total_servicos, desconto_total, acrescimo_total, desconto_unit, acrescimo_unit, total_unit) " +
+                    $"VALUES ('{id_servico}', '{id_orcamento}', '{observacao}', '{tamanho}', '{total_unit}', '{descontototal}', '{acrescimototal}', '{desconto_unit}', '{acrescimo_unit}', '{total_unit}')";
+                bancodedados.executar(sqlinsertitemorcamento);
+                bancodedados.desconectar();
+                bancodedados.conectar();
+                string sqlinsertdetalheorcamento = $"INSERT INTO detalhes_orcamento ()";
+
+            }
         }
         private void CalcularTotaisListView()
         {
