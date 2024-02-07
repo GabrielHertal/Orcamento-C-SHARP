@@ -21,7 +21,6 @@ namespace Orçamento
         //variaveis db, preenchelv, e formatar
         BancodeDados bancodedados = new BancodeDados();
         CarregarDados carregarDados = new CarregarDados();
-        Formatar formatar = new Formatar();
         private void Form_clientes_Load(object sender, EventArgs e)
         {
             carregarDados.PreencheListViewClientes(lv_clientes);

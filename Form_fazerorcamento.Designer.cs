@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             label1 = new Label();
             txt_nomeorcamento = new TextBox();
             dtp_inicio = new DateTimePicker();
@@ -61,6 +62,8 @@
             label11 = new Label();
             btn_editaorcamento = new Button();
             btn_finalizaorcamento = new Button();
+            carregarDadosBindingSource = new BindingSource(components);
+            ((System.ComponentModel.ISupportInitialize)carregarDadosBindingSource).BeginInit();
             SuspendLayout();
             // 
             // label1
@@ -113,7 +116,7 @@
             txt_tamanho.Font = new Font("Segoe UI", 10F);
             txt_tamanho.Location = new Point(648, 85);
             txt_tamanho.Name = "txt_tamanho";
-            txt_tamanho.Size = new Size(115, 25);
+            txt_tamanho.Size = new Size(105, 25);
             txt_tamanho.TabIndex = 5;
             // 
             // label2
@@ -370,6 +373,10 @@
             btn_finalizaorcamento.UseVisualStyleBackColor = true;
             btn_finalizaorcamento.Click += btn_finalizaorcamento_Click;
             // 
+            // carregarDadosBindingSource
+            // 
+            carregarDadosBindingSource.DataSource = typeof(CarregarDados);
+            // 
             // Form_fazerorcamento
             // 
             AutoScaleDimensions = new SizeF(8F, 17F);
@@ -407,6 +414,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Fazer Orçamento";
             Load += Form_fazerorcamento_Load;
+            ((System.ComponentModel.ISupportInitialize)carregarDadosBindingSource).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -446,5 +454,6 @@
         private ColumnHeader desconto;
         private ColumnHeader acrescimo;
         private ColumnHeader Total;
+        private BindingSource carregarDadosBindingSource;
     }
 }

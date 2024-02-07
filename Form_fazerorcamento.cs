@@ -1,4 +1,5 @@
-﻿using FastReport.Data;
+﻿using FastReport.Barcode;
+using FastReport.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -54,7 +55,6 @@ namespace Orçamento
                 if (ServicoJaAdicionado(servico))
                 {
                     MessageBox.Show("Este serviço já foi adicionado!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
                 }
                 else
                 {
@@ -193,9 +193,9 @@ namespace Orçamento
             string f_data = dtp_conclusao.Text;
             string localizacao = txt_localização.Text;
             string observacao = txt_observações.Text;
-            if (decimal.TryParse(txt_total.Text, NumberStyles.Currency, CultureInfo.CurrentUICulture, out decimal total_servicos));
-            if (decimal.TryParse(txt_acrescimo.Text, NumberStyles.Currency, CultureInfo.CurrentUICulture, out decimal acrescimototal));
-            if (decimal.TryParse(txt_desconto.Text, NumberStyles.Currency, CultureInfo.CurrentUICulture, out decimal descontototal));
+            if (decimal.TryParse(txt_total.Text.Replace(",", "."), NumberStyles.Currency, CultureInfo.CurrentUICulture, out decimal total_servicos));
+            if (decimal.TryParse(txt_acrescimo.Text.Replace(",", "."), NumberStyles.Currency, CultureInfo.CurrentUICulture, out decimal acrescimototal));
+            if (decimal.TryParse(txt_desconto.Text.Replace(",", "."), NumberStyles.Currency, CultureInfo.CurrentUICulture, out decimal descontototal));
             int id_cliente = -1;
                 if (cbx_cliente.SelectedIndex == -1 || lv_servicos.Items.Count == 0)
                 {
@@ -217,33 +217,64 @@ namespace Orçamento
 
             bancodedados.executar(sqlinsertorcamento);
             bancodedados.desconectar();
-
+            
             bancodedados.conectar();
-            string sqlObterIdorcamento = "SELECT GEN_ID(GEN_ORCAMENTO, 0) AS id_orcamento FROM RDB$DATABASE";
-            bancodedados.Consultar(sqlObterIdorcamento);
-            int id_orcamento;
+            string sqlidorcamento = $"SELECT GEN_ID(gen_orcamento, 0) FROM RDB$DATABASE";
+            bancodedados.Consultar(sqlidorcamento);
+            int id_orcamento = 0;
             if (bancodedados.dados.Read())
             {
-                id_orcamento = Convert.ToInt32(bancodedados.dados["id_orcamento"].ToString());
+                id_orcamento = Convert.ToInt32(bancodedados.dados[0].ToString());
+                bancodedados.desconectar();
+            }
+            else
+            {
+                MessageBox.Show("Erro ao inserir orcamento!", "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             bancodedados.desconectar();
             
             foreach (ListViewItem item in lv_servicos.Items)
             {
-                id_orcamento = Convert.ToInt32(bancodedados.dados["id_orcamento"].ToString());
                 int id_servico = Convert.ToInt32(item.SubItems[0].Text);
                 decimal tamanho = Convert.ToInt32(item.SubItems[2].Text);
-                decimal desconto_unit = Convert.ToDecimal(item.SubItems[3].Text.Replace("R$", "").Replace(".", ","), CultureInfo.GetCultureInfo("pt-BR"));
-                decimal acrescimo_unit = Convert.ToDecimal(item.SubItems[4].Text.Replace("R$", "").Replace(".", ","), CultureInfo.GetCultureInfo("pt-BR"));
-                decimal total_unit = Convert.ToDecimal(item.SubItems[5].Text.Replace("R$", "").Replace(".", ","), CultureInfo.GetCultureInfo("pt-BR"));
-                bancodedados.conectar();
-                string sqlinsertitemorcamento = $"INSERT INTO itens_orcamento(id_item_orcamento, fk_id_orcamento, descricao, tamanho, total_servicos, desconto_total, acrescimo_total, desconto_unit, acrescimo_unit, total_unit) " +
-                    $"VALUES ('{id_servico}', '{id_orcamento}', '{observacao}', '{tamanho}', '{total_unit}', '{descontototal}', '{acrescimototal}', '{desconto_unit}', '{acrescimo_unit}', '{total_unit}')";
-                bancodedados.executar(sqlinsertitemorcamento);
-                bancodedados.desconectar();
-                bancodedados.conectar();
-                string sqlinsertdetalheorcamento = $"INSERT INTO detalhes_orcamento ()";
-
+                decimal desconto_unit = Convert.ToDecimal(item.SubItems[3].Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR"));
+                decimal acrescimo_unit = Convert.ToDecimal(item.SubItems[4].Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR"));
+                decimal total_unit = Convert.ToDecimal(item.SubItems[5].Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR"));
+                try
+                {
+                    bancodedados.conectar();
+                    string sqlinsertitemorcamento = $"INSERT INTO itens_orcamento(id_item_orcamento, fk_id_orcamento ,descricao, tamanho, total_servicos, desconto_total, acrescimo_total, desconto_unit, acrescimo_unit, total_unit, fk_id_servico) " +
+                        $"VALUES (null, '{id_orcamento}','{observacao}', '{tamanho}', '{total_servicos}', '{descontototal}', '{acrescimototal}', '{desconto_unit}', '{acrescimo_unit}', '{total_unit}', '{id_servico}')";
+                    bancodedados.executar(sqlinsertitemorcamento);
+                    string sqlitemorcamento = $"SELECT GEN_ID(gen_item_orcamento, 0) FROM RDB$DATABASE";
+                    bancodedados.Consultar(sqlitemorcamento);
+                    int id_item_orcamento = 0;
+                    if (bancodedados.dados.Read())
+                    {
+                        id_item_orcamento = Convert.ToInt32(bancodedados.dados[0].ToString());
+                    }
+                    bancodedados.desconectar();
+                    bancodedados.conectar();
+                    string sqlInsertDetalhesOrcamento = $"INSERT INTO detalhes_orcamento(fk_id_cliente, fk_orcamento, fk_id_servico, fk_id_item_orcamento) " +
+                                  $"VALUES ('{id_cliente}', '{id_orcamento}', '{id_servico}', '{id_item_orcamento}')";
+                    bancodedados.executar(sqlInsertDetalhesOrcamento);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao inserir item orcamento: {ex.Message}", "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    bancodedados.desconectar();
+                    txt_nomeorcamento.Text = "";
+                    txt_localização.Text = "";
+                    txt_observações.Text = "";
+                    lv_servicos.Items.Clear();
+                    cbx_cliente.Text = "";
+                    txt_desconto.Text = "R$ 0,00";
+                    txt_acrescimo.Text = "R$ 0,00";
+                    txt_total.Text = "R$ 0,00";
+                }
             }
         }
         private void CalcularTotaisListView()

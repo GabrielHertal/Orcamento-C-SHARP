@@ -11,7 +11,7 @@ namespace Orçamento
 
         public BancodeDados()
         {
-            str_conexao = @"User=SYSDBA;Password=masterkey;Database=C:\Users\Gabriel\Desktop\Projeto orçamento C#\Orçamento\bin\Debug\net8.0-windows\ORÇAMENTO.FDB;DataSource=localhost;Port=3050;";
+            str_conexao = @"User=SYSDBA;Password=masterkey;Database=C:\Users\Gabriel\Desktop\Projeto orçamento C#\Orçamento\bin\Debug\net8.0-windows\ORCAMENTO.FDB;DataSource=localhost;Port=3050;";
         }
 
         public void conectar()
@@ -71,10 +71,10 @@ namespace Orçamento
                 comando.CommandText = sql;
                 int count = Convert.ToInt32(comando.ExecuteScalar());
                 return count > 0;
+                desconectar();
             }
             catch (Exception e)
             {
-                desconectar();
                 MessageBox.Show($"Erro ao verificar Documento no Banco de Dados: {e.Message}", "Erro ao verificar", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
