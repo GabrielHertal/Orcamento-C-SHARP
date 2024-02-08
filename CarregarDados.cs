@@ -11,8 +11,8 @@ namespace Orçamento
     {
         BancodeDados bancodedados = new BancodeDados();
         //preenche listview dos clientes
-       public void PreencheListViewClientes(ListView listView)
-       {
+        public void PreencheListViewClientes(ListView listView)
+        {
             BancodeDados bancodedados = new BancodeDados();
             try
             {
@@ -21,7 +21,7 @@ namespace Orçamento
                 string sql = "SELECT * FROM clientes WHERE ativo = 1 ORDER BY id_cliente";
                 bancodedados.Consultar(sql);
                 listView.Items.Clear();
-                while(bancodedados.dados.Read())
+                while (bancodedados.dados.Read())
                 {
                     ListViewItem item = new ListViewItem(bancodedados.dados["id_cliente"].ToString());
                     item.SubItems.Add(bancodedados.dados["nome"].ToString());
@@ -30,7 +30,7 @@ namespace Orçamento
                     listView.Items.Add(item);
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 MessageBox.Show($"Erro ao carregar dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -38,10 +38,10 @@ namespace Orçamento
             {
                 bancodedados.desconectar();
             }
-       }
-       //preenche o listview do servicos 
-       public void PreencheListViewServicos(ListView listView) 
-       {
+        }
+        //preenche o listview do servicos 
+        public void PreencheListViewServicos(ListView listView)
+        {
             try
             {
                 bancodedados.conectar();
@@ -49,7 +49,7 @@ namespace Orçamento
                 string sql = "SELECT * FROM servicos WHERE ativo = 1 ORDER BY id_servicos";
                 bancodedados.Consultar(sql);
                 listView.Items.Clear();
-                while(bancodedados.dados.Read())
+                while (bancodedados.dados.Read())
                 {
                     ListViewItem item = new ListViewItem(bancodedados.dados["id_servicos"].ToString());
                     item.SubItems.Add(bancodedados.dados["nome_servico"].ToString());
@@ -60,13 +60,13 @@ namespace Orçamento
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao carregarr dados: {ex.Message}", "Erro", MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show($"Erro ao carregarr dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 bancodedados.desconectar();
             }
-       }
+        }
         public void PreencheComboBoxServicos(ComboBox comboBox)
         {
             try
@@ -108,6 +108,36 @@ namespace Orçamento
             catch (Exception ex)
             {
                 MessageBox.Show("Erro ao carregar dados: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        public void PreencheListVieOrcamentos(ListView listView)
+        {
+            BancodeDados bancodedados = new BancodeDados();
+            try
+            {
+                bancodedados.conectar();
+                ListView listView1 = new ListView();
+                string sql = "SELECT * FROM orcamentos ORDER BY id_orcamento";
+                bancodedados.Consultar(sql);
+                listView.Items.Clear();
+                while (bancodedados.dados.Read())
+                {
+                    ListViewItem item = new ListViewItem(bancodedados.dados["id_orcamento"].ToString());
+                    item.SubItems.Add(bancodedados.dados["nome_orcamento"].ToString());
+                    DateTime dataInicio = DateTime.Parse(bancodedados.dados["data_inicio"].ToString());
+                    item.SubItems.Add(dataInicio.ToString("dd/MM/yyyy"));
+                    DateTime dataConclusao = DateTime.Parse(bancodedados.dados["data_conclusao"].ToString());
+                    item.SubItems.Add(dataConclusao.ToString("dd/MM/yyyy"));
+                    listView.Items.Add(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao carregar dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                bancodedados.desconectar();
             }
         }
     }

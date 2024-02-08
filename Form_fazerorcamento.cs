@@ -33,6 +33,7 @@ namespace Orçamento
         {
             carregarDados.PreencheComboBoxServicos(cbx_serviço);
             carregarDados.PreencheComboboxClientes(cbx_cliente);
+            carregarDados.PreencheListVieOrcamentos(lv_orcamentos);
         }
         private void btn_adicionar_Click(object sender, EventArgs e)
         {
@@ -79,6 +80,7 @@ namespace Orçamento
                             cbx_serviço.Text = "";
                             txt_tamanho.Text = "";
                             CalcularTotaisListView();
+                            carregarDados.PreencheListVieOrcamentos(lv_orcamentos);
                         }
                     }
                 }
@@ -161,11 +163,11 @@ namespace Orçamento
         }
         private void txt_desconto_TextChanged(object sender, EventArgs e)
         {
-          AtualizarTotalComDescontoOuAcrescimo();
+            AtualizarTotalComDescontoOuAcrescimo();
         }
         private void txt_acrescimo_TextChanged(object sender, EventArgs e)
         {
-          AtualizarTotalComDescontoOuAcrescimo();
+            AtualizarTotalComDescontoOuAcrescimo();
         }
         private void AtualizarTotalComDescontoOuAcrescimo()
         {
@@ -193,22 +195,22 @@ namespace Orçamento
             string f_data = dtp_conclusao.Text;
             string localizacao = txt_localização.Text;
             string observacao = txt_observações.Text;
-            if (decimal.TryParse(txt_total.Text.Replace(",", "."), NumberStyles.Currency, CultureInfo.CurrentUICulture, out decimal total_servicos));
-            if (decimal.TryParse(txt_acrescimo.Text.Replace(",", "."), NumberStyles.Currency, CultureInfo.CurrentUICulture, out decimal acrescimototal));
-            if (decimal.TryParse(txt_desconto.Text.Replace(",", "."), NumberStyles.Currency, CultureInfo.CurrentUICulture, out decimal descontototal));
+            string total_servicos = txt_total.Text.Replace("R$", "").Replace(",",".");
+            string acrescimototal = txt_acrescimo.Text.Replace("R$", "").Replace(",", ".");
+            string descontototal = txt_desconto.Text.Replace("R$", "").Replace(",", ".");
             int id_cliente = -1;
-                if (cbx_cliente.SelectedIndex == -1 || lv_servicos.Items.Count == 0)
-                {
-                    MessageBox.Show("Selecione um cliente ou adicione um serviço!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
-                }
+            if (cbx_cliente.SelectedIndex == -1 || lv_servicos.Items.Count == 0)
+            {
+                MessageBox.Show("Selecione um cliente ou adicione um serviço!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
             bancodedados.conectar();
             string sql = $"SELECT id_cliente FROM clientes WHERE nome = '{cliente}' ORDER BY id_cliente";
             bancodedados.Consultar(sql);
-                if (bancodedados.dados.Read())
-                {
-                    id_cliente = bancodedados.dados.GetInt32(0);
-                }
+            if (bancodedados.dados.Read())
+            {
+                id_cliente = bancodedados.dados.GetInt32(0);
+            }
             bancodedados.desconectar();
 
             bancodedados.conectar();
@@ -217,7 +219,7 @@ namespace Orçamento
 
             bancodedados.executar(sqlinsertorcamento);
             bancodedados.desconectar();
-            
+
             bancodedados.conectar();
             string sqlidorcamento = $"SELECT GEN_ID(gen_orcamento, 0) FROM RDB$DATABASE";
             bancodedados.Consultar(sqlidorcamento);
@@ -232,14 +234,14 @@ namespace Orçamento
                 MessageBox.Show("Erro ao inserir orcamento!", "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             bancodedados.desconectar();
-            
+
             foreach (ListViewItem item in lv_servicos.Items)
             {
                 int id_servico = Convert.ToInt32(item.SubItems[0].Text);
-                decimal tamanho = Convert.ToInt32(item.SubItems[2].Text);
-                decimal desconto_unit = Convert.ToDecimal(item.SubItems[3].Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR"));
-                decimal acrescimo_unit = Convert.ToDecimal(item.SubItems[4].Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR"));
-                decimal total_unit = Convert.ToDecimal(item.SubItems[5].Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR"));
+                decimal tamanho = Convert.ToDecimal(item.SubItems[2].Text, CultureInfo.GetCultureInfo("pt-BR"));
+                string desconto_unit = item.SubItems[3].Text.Replace("R$", "").Replace(",", ".");
+                string acrescimo_unit = item.SubItems[4].Text.Replace("R$", "").Replace(",", ".");
+                string total_unit = item.SubItems[5].Text.Replace("R$", "").Replace(",", ".");
                 try
                 {
                     bancodedados.conectar();
@@ -274,6 +276,7 @@ namespace Orçamento
                     txt_desconto.Text = "R$ 0,00";
                     txt_acrescimo.Text = "R$ 0,00";
                     txt_total.Text = "R$ 0,00";
+                    carregarDados.PreencheListVieOrcamentos(lv_orcamentos);
                 }
             }
         }
@@ -287,9 +290,9 @@ namespace Orçamento
                 decimal total;
                 decimal desconto;
                 decimal acrescimo;
-                if ((decimal.TryParse(item.SubItems[5].Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-BR"), out total))&& 
-                   (decimal.TryParse(item.SubItems[4].Text.Replace("R$", "").Replace(".",","), NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-br"), out acrescimo)&& 
-                   (decimal.TryParse(item.SubItems[3].Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-br"), out desconto)))) 
+                if ((decimal.TryParse(item.SubItems[5].Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-BR"), out total)) &&
+                   (decimal.TryParse(item.SubItems[4].Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-br"), out acrescimo) &&
+                   (decimal.TryParse(item.SubItems[3].Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-br"), out desconto))))
                 {
                     descontototal += desconto;
                     acrescimototal += acrescimo;
@@ -303,6 +306,44 @@ namespace Orçamento
         private bool ServicoJaAdicionado(string nomeServico)
         {
             return lv_servicos.Items.Cast<ListViewItem>().Any(item => item.SubItems[1].Text == nomeServico);
+        }
+
+        private void btn_editaorcamento_Click(object sender, EventArgs e)
+        {
+            if (lv_orcamentos.SelectedIndices.Count == 0)
+            {
+                MessageBox.Show("Selecione um orcamento!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            int id_orcamento = Convert.ToInt32(lv_orcamentos.Items[lv_orcamentos.SelectedIndices[0]].SubItems[0].Text);
+            lv_servicos.Items.Clear();
+
+            string sqlitens = $"SELECT itens_orcamento.* ,servicos.nome_servico FROM itens_orcamento JOIN servicos ON itens_orcamento.fk_id_servico = servicos.id_servicos WHERE itens_orcamento.fk_id_orcamento = {id_orcamento}";
+            string sqlorcamento = $"SELECT * FROM orcamento WHERE id_orcamento = {id_orcamento}";
+            bancodedados.conectar();
+            bancodedados.Consultar(sqlitens);
+            bancodedados.Consultar(sqlorcamento);
+
+            while (bancodedados.dados.Read())
+            {
+                int id_servico = Convert.ToInt32(bancodedados.dados["fk_id_servico"]);
+                string nomeServico = bancodedados.dados["nome_servico"].ToString();
+                decimal tamanhoServico = Convert.ToDecimal(bancodedados.dados["tamanho"]);
+                decimal desconto_unit = Convert.ToDecimal(bancodedados.dados["desconto_unit"]);
+                decimal acrescimo_unit = Convert.ToDecimal(bancodedados.dados["acrescimo_unit"]);
+                decimal total_unit = Convert.ToDecimal(bancodedados.dados["total_unit"]);
+
+                ListViewItem item = new ListViewItem(id_servico.ToString());
+                item.SubItems.Add(nomeServico);
+                item.SubItems.Add(tamanhoServico.ToString());
+                item.SubItems.Add(desconto_unit.ToString("C2", CultureInfo.GetCultureInfo("pt-BR")));
+                item.SubItems.Add(acrescimo_unit.ToString("C2", CultureInfo.GetCultureInfo("pt-BR")));
+                item.SubItems.Add(total_unit.ToString("C2", CultureInfo.GetCultureInfo("pt-BR")));
+                lv_servicos.Items.Add(item);
+            }
+
+            bancodedados.desconectar();
         }
     }
 }

@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
             label1 = new Label();
             txt_nomeorcamento = new TextBox();
             dtp_inicio = new DateTimePicker();
@@ -62,8 +61,12 @@
             label11 = new Label();
             btn_editaorcamento = new Button();
             btn_finalizaorcamento = new Button();
-            carregarDadosBindingSource = new BindingSource(components);
-            ((System.ComponentModel.ISupportInitialize)carregarDadosBindingSource).BeginInit();
+            lv_orcamentos = new ListView();
+            columnHeader1 = new ColumnHeader();
+            columnHeader2 = new ColumnHeader();
+            columnHeader3 = new ColumnHeader();
+            columnHeader4 = new ColumnHeader();
+            button1 = new Button();
             SuspendLayout();
             // 
             // label1
@@ -356,32 +359,76 @@
             // 
             // btn_editaorcamento
             // 
-            btn_editaorcamento.Location = new Point(427, 375);
+            btn_editaorcamento.Location = new Point(427, 535);
             btn_editaorcamento.Name = "btn_editaorcamento";
             btn_editaorcamento.Size = new Size(366, 36);
             btn_editaorcamento.TabIndex = 25;
             btn_editaorcamento.Text = "Editar Orçamento";
             btn_editaorcamento.UseVisualStyleBackColor = true;
+            btn_editaorcamento.Click += btn_editaorcamento_Click;
             // 
             // btn_finalizaorcamento
             // 
             btn_finalizaorcamento.Location = new Point(14, 375);
             btn_finalizaorcamento.Name = "btn_finalizaorcamento";
-            btn_finalizaorcamento.Size = new Size(364, 36);
+            btn_finalizaorcamento.Size = new Size(779, 36);
             btn_finalizaorcamento.TabIndex = 26;
             btn_finalizaorcamento.Text = "Finalizar Orçamento";
             btn_finalizaorcamento.UseVisualStyleBackColor = true;
             btn_finalizaorcamento.Click += btn_finalizaorcamento_Click;
             // 
-            // carregarDadosBindingSource
+            // lv_orcamentos
             // 
-            carregarDadosBindingSource.DataSource = typeof(CarregarDados);
+            lv_orcamentos.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2, columnHeader3, columnHeader4 });
+            lv_orcamentos.Font = new Font("Segoe UI", 10F);
+            lv_orcamentos.FullRowSelect = true;
+            lv_orcamentos.GridLines = true;
+            lv_orcamentos.Location = new Point(10, 417);
+            lv_orcamentos.Name = "lv_orcamentos";
+            lv_orcamentos.Size = new Size(781, 112);
+            lv_orcamentos.TabIndex = 27;
+            lv_orcamentos.UseCompatibleStateImageBehavior = false;
+            lv_orcamentos.View = View.Details;
+            // 
+            // columnHeader1
+            // 
+            columnHeader1.Text = "ID";
+            columnHeader1.Width = 40;
+            // 
+            // columnHeader2
+            // 
+            columnHeader2.Text = "ORÇAMENTO";
+            columnHeader2.TextAlign = HorizontalAlignment.Center;
+            columnHeader2.Width = 485;
+            // 
+            // columnHeader3
+            // 
+            columnHeader3.Text = "DATA INICIO";
+            columnHeader3.TextAlign = HorizontalAlignment.Center;
+            columnHeader3.Width = 125;
+            // 
+            // columnHeader4
+            // 
+            columnHeader4.Text = "DATA CONCLUSÃO";
+            columnHeader4.TextAlign = HorizontalAlignment.Center;
+            columnHeader4.Width = 125;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(10, 535);
+            button1.Name = "button1";
+            button1.Size = new Size(366, 36);
+            button1.TabIndex = 28;
+            button1.Text = "Atualizar Orçamento";
+            button1.UseVisualStyleBackColor = true;
             // 
             // Form_fazerorcamento
             // 
             AutoScaleDimensions = new SizeF(8F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(805, 726);
+            Controls.Add(button1);
+            Controls.Add(lv_orcamentos);
             Controls.Add(btn_finalizaorcamento);
             Controls.Add(btn_editaorcamento);
             Controls.Add(txt_total);
@@ -414,7 +461,6 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Fazer Orçamento";
             Load += Form_fazerorcamento_Load;
-            ((System.ComponentModel.ISupportInitialize)carregarDadosBindingSource).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -454,6 +500,11 @@
         private ColumnHeader desconto;
         private ColumnHeader acrescimo;
         private ColumnHeader Total;
-        private BindingSource carregarDadosBindingSource;
+        private ListView lv_orcamentos;
+        private ColumnHeader columnHeader1;
+        private ColumnHeader columnHeader2;
+        private ColumnHeader columnHeader3;
+        private ColumnHeader columnHeader4;
+        private Button button1;
     }
 }
