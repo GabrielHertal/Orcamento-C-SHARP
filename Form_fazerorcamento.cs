@@ -191,11 +191,11 @@ namespace Orçamento
         {
             string nomeorcamento = txt_nomeorcamento.Text;
             string cliente = cbx_cliente.Text;
-            string i_data = dtp_inicio.Text;
-            string f_data = dtp_conclusao.Text;
+            DateTime i_data = dtp_inicio.Value;
+            DateTime f_data = dtp_conclusao.Value;
             string localizacao = txt_localização.Text;
             string observacao = txt_observações.Text;
-            string total_servicos = txt_total.Text.Replace("R$", "").Replace(",",".");
+            string total_servicos = txt_total.Text.Replace("R$", "").Replace(",", ".");
             string acrescimototal = txt_acrescimo.Text.Replace("R$", "").Replace(",", ".");
             string descontototal = txt_desconto.Text.Replace("R$", "").Replace(",", ".");
             int id_cliente = -1;
@@ -212,14 +212,15 @@ namespace Orçamento
                 id_cliente = bancodedados.dados.GetInt32(0);
             }
             bancodedados.desconectar();
-
             bancodedados.conectar();
+            string i_data_formatada = i_data.ToString("yyyy-MM-dd");
+            string f_data_formatada = f_data.ToString("yyyy-MM-dd"); //ver para fazer de uma forma melhor
+
             string sqlinsertorcamento = $"INSERT INTO orcamentos (nome_orcamento, localizacao, observacao ,data_inicio, data_conclusao, fkid_cliente) " +
-                               $"VALUES ('{nomeorcamento}', '{localizacao}', '{observacao}' ,'{i_data}', '{f_data}', '{id_cliente}')";
+                               $"VALUES ('{nomeorcamento}', '{localizacao}', '{observacao}' ,'{i_data_formatada}', '{f_data_formatada}', '{id_cliente}')";
 
             bancodedados.executar(sqlinsertorcamento);
             bancodedados.desconectar();
-
             bancodedados.conectar();
             string sqlidorcamento = $"SELECT GEN_ID(gen_orcamento, 0) FROM RDB$DATABASE";
             bancodedados.Consultar(sqlidorcamento);
@@ -315,16 +316,11 @@ namespace Orçamento
                 MessageBox.Show("Selecione um orcamento!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-
             int id_orcamento = Convert.ToInt32(lv_orcamentos.Items[lv_orcamentos.SelectedIndices[0]].SubItems[0].Text);
             lv_servicos.Items.Clear();
-
             string sqlitens = $"SELECT itens_orcamento.* ,servicos.nome_servico FROM itens_orcamento JOIN servicos ON itens_orcamento.fk_id_servico = servicos.id_servicos WHERE itens_orcamento.fk_id_orcamento = {id_orcamento}";
-            string sqlorcamento = $"SELECT * FROM orcamento WHERE id_orcamento = {id_orcamento}";
             bancodedados.conectar();
             bancodedados.Consultar(sqlitens);
-            bancodedados.Consultar(sqlorcamento);
-
             while (bancodedados.dados.Read())
             {
                 int id_servico = Convert.ToInt32(bancodedados.dados["fk_id_servico"]);
@@ -333,7 +329,6 @@ namespace Orçamento
                 decimal desconto_unit = Convert.ToDecimal(bancodedados.dados["desconto_unit"]);
                 decimal acrescimo_unit = Convert.ToDecimal(bancodedados.dados["acrescimo_unit"]);
                 decimal total_unit = Convert.ToDecimal(bancodedados.dados["total_unit"]);
-
                 ListViewItem item = new ListViewItem(id_servico.ToString());
                 item.SubItems.Add(nomeServico);
                 item.SubItems.Add(tamanhoServico.ToString());
@@ -341,9 +336,27 @@ namespace Orçamento
                 item.SubItems.Add(acrescimo_unit.ToString("C2", CultureInfo.GetCultureInfo("pt-BR")));
                 item.SubItems.Add(total_unit.ToString("C2", CultureInfo.GetCultureInfo("pt-BR")));
                 lv_servicos.Items.Add(item);
+                CalcularTotaisListView();
             }
-
             bancodedados.desconectar();
+            bancodedados.conectar();
+            string sqlorcamento = $"SELECT orcamentos.*, clientes.nome FROM orcamentos JOIN clientes on clientes.id_cliente = orcamentos.fkid_cliente WHERE id_orcamento = {id_orcamento}";
+            bancodedados.Consultar(sqlorcamento);
+            if (bancodedados.dados.Read())
+            {
+                txt_nomeorcamento.Text = bancodedados.dados["nome_orcamento"].ToString();
+                dtp_inicio.Text = bancodedados.dados["data_inicio"].ToString();
+                dtp_conclusao.Text = bancodedados.dados["data_conclusao"].ToString();
+                txt_observações.Text = bancodedados.dados["observacao"].ToString();
+                txt_localização.Text = bancodedados.dados["localizacao"].ToString();
+                cbx_cliente.SelectedItem = bancodedados.dados["nome"].ToString();
+            }
+            bancodedados.desconectar();
+        }
+
+        private void btn_atualizaorcamento_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

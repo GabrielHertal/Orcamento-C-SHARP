@@ -66,7 +66,7 @@
             columnHeader2 = new ColumnHeader();
             columnHeader3 = new ColumnHeader();
             columnHeader4 = new ColumnHeader();
-            button1 = new Button();
+            btn_atualizaorcamento = new Button();
             SuspendLayout();
             // 
             // label1
@@ -413,21 +413,22 @@
             columnHeader4.TextAlign = HorizontalAlignment.Center;
             columnHeader4.Width = 125;
             // 
-            // button1
+            // btn_atualizaorcamento
             // 
-            button1.Location = new Point(10, 535);
-            button1.Name = "button1";
-            button1.Size = new Size(366, 36);
-            button1.TabIndex = 28;
-            button1.Text = "Atualizar Orçamento";
-            button1.UseVisualStyleBackColor = true;
+            btn_atualizaorcamento.Location = new Point(10, 535);
+            btn_atualizaorcamento.Name = "btn_atualizaorcamento";
+            btn_atualizaorcamento.Size = new Size(366, 36);
+            btn_atualizaorcamento.TabIndex = 28;
+            btn_atualizaorcamento.Text = "Atualizar Orçamento";
+            btn_atualizaorcamento.UseVisualStyleBackColor = true;
+            btn_atualizaorcamento.Click += btn_atualizaorcamento_Click;
             // 
             // Form_fazerorcamento
             // 
             AutoScaleDimensions = new SizeF(8F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(805, 726);
-            Controls.Add(button1);
+            Controls.Add(btn_atualizaorcamento);
             Controls.Add(lv_orcamentos);
             Controls.Add(btn_finalizaorcamento);
             Controls.Add(btn_editaorcamento);
@@ -505,6 +506,6 @@
         private ColumnHeader columnHeader2;
         private ColumnHeader columnHeader3;
         private ColumnHeader columnHeader4;
-        private Button button1;
+        private Button btn_atualizaorcamento;
     }
 }
