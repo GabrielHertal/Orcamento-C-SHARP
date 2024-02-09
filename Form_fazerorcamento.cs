@@ -308,15 +308,16 @@ namespace Orçamento
         {
             return lv_servicos.Items.Cast<ListViewItem>().Any(item => item.SubItems[1].Text == nomeServico);
         }
-
+        public int id_orcamento;
         private void btn_editaorcamento_Click(object sender, EventArgs e)
         {
+            editar = true; 
             if (lv_orcamentos.SelectedIndices.Count == 0)
             {
                 MessageBox.Show("Selecione um orcamento!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            int id_orcamento = Convert.ToInt32(lv_orcamentos.Items[lv_orcamentos.SelectedIndices[0]].SubItems[0].Text);
+            id_orcamento = Convert.ToInt32(lv_orcamentos.Items[lv_orcamentos.SelectedIndices[0]].SubItems[0].Text);
             lv_servicos.Items.Clear();
             string sqlitens = $"SELECT itens_orcamento.* ,servicos.nome_servico FROM itens_orcamento JOIN servicos ON itens_orcamento.fk_id_servico = servicos.id_servicos WHERE itens_orcamento.fk_id_orcamento = {id_orcamento}";
             bancodedados.conectar();
@@ -353,10 +354,75 @@ namespace Orçamento
             }
             bancodedados.desconectar();
         }
-
+        public bool editar = false;
         private void btn_atualizaorcamento_Click(object sender, EventArgs e)
         {
-
+            if (editar == false)
+            {
+                MessageBox.Show("Selecione um orcamento e clique em Editar Orçamaneto!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                string nomeorcamento = txt_nomeorcamento.Text;
+                string cliente = cbx_cliente.Text;
+                DateTime i_data = dtp_inicio.Value;
+                DateTime f_data = dtp_conclusao.Value;
+                string localizacao = txt_localização.Text;
+                string observacao = txt_observações.Text;
+                string total_servicos = txt_total.Text.Replace("R$", "").Replace(",", ".");
+                string acrescimototal = txt_acrescimo.Text.Replace("R$", "").Replace(",", ".");
+                string descontototal = txt_desconto.Text.Replace("R$", "").Replace(",", ".");
+                int id_cliente = -1;
+                bancodedados.conectar();
+                string sql = $"SELECT id_cliente FROM clientes WHERE nome = '{cliente}' ORDER BY id_cliente";
+                bancodedados.Consultar(sql);
+                if (bancodedados.dados.Read())
+                {
+                    id_cliente = bancodedados.dados.GetInt32(0);
+                }
+                bancodedados.desconectar();
+                string i_data_formatada = i_data.ToString("yyyy-MM-dd");
+                string f_data_formatada = f_data.ToString("yyyy-MM-dd");
+                bancodedados.conectar();
+                string sqlatualizaorcamento = $"UPDATE orcamentos SET nome_orcamento = '{nomeorcamento}', localizacao = '{localizacao}', observacao = '{observacao}', data_inicio = '{i_data_formatada}', data_conclusao = '{f_data_formatada}' WHERE id_orcamento = {id_orcamento}";
+                bancodedados.executar(sqlatualizaorcamento);
+                bancodedados.desconectar();
+                foreach (ListViewItem item in lv_servicos.Items)
+                {
+                    int id_servico = Convert.ToInt32(item.SubItems[0].Text);
+                    decimal tamanho = Convert.ToDecimal(item.SubItems[2].Text, CultureInfo.GetCultureInfo("pt-BR"));
+                    string desconto_unit = item.SubItems[3].Text.Replace("R$", "").Replace(",", ".");
+                    string acrescimo_unit = item.SubItems[4].Text.Replace("R$", "").Replace(",", ".");
+                    string total_unit = item.SubItems[5].Text.Replace("R$", "").Replace(",", ".");
+                    try
+                    {
+                        bancodedados.conectar();
+                        string sqlinsertitemorcamento = $"UPDATE itens_orcamento SET  descricao = '{observacao}', tamanho = '{tamanho}', total_servicos = '{total_servicos}', desconto_total = '{descontototal}', acrescimo_total = '{acrescimototal}', desconto_unit = '{desconto_unit}', acrescimo_unit = '{acrescimo_unit}', total_unit = '{total_unit}', fk_id_servico = '{id_servico}' WHERE fk_id_orcamento = '{id_orcamento}'";
+                        bancodedados.executar(sqlinsertitemorcamento);
+                        bancodedados.desconectar();
+                        bancodedados.conectar();
+                        string sqlInsertDetalhesOrcamento = $"UPDATE detalhes_orcamento SET fk_id_cliente = '{id_cliente}', fk_id_servico = '{id_servico}' WHERE fk_orcamento = '{id_orcamento}'";
+                        bancodedados.executar(sqlInsertDetalhesOrcamento);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Erro ao inserir item orcamento: {ex.Message}", "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    finally
+                    {
+                        bancodedados.desconectar();
+                        txt_nomeorcamento.Text = "";
+                        txt_localização.Text = "";
+                        txt_observações.Text = "";
+                        lv_servicos.Items.Clear();
+                        cbx_cliente.Text = "";
+                        txt_desconto.Text = "R$ 0,00";
+                        txt_acrescimo.Text = "R$ 0,00";
+                        txt_total.Text = "R$ 0,00";
+                        carregarDados.PreencheListVieOrcamentos(lv_orcamentos);
+                    }
+                }
+            }
         }
     }
 }
