@@ -19,7 +19,7 @@ namespace Orçamento
             InitializeComponent();
         }
         //variaveis db, preenchelv, e formatar
-        BancodeDados bancodedados = new BancodeDados();
+        OLDBancodeDados bancodedados = new OLDBancodeDados();
         CarregarDados carregarDados = new CarregarDados();
         private void Form_clientes_Load(object sender, EventArgs e)
         {

@@ -9,11 +9,11 @@ namespace Orçamento
 {
     public class CarregarDados
     {
-        BancodeDados bancodedados = new BancodeDados();
+        OLDBancodeDados bancodedados = new OLDBancodeDados();
         //preenche listview dos clientes
         public void PreencheListViewClientes(ListView listView)
         {
-            BancodeDados bancodedados = new BancodeDados();
+            OLDBancodeDados bancodedados = new OLDBancodeDados();
             try
             {
                 bancodedados.conectar();
@@ -112,7 +112,7 @@ namespace Orçamento
         }
         public void PreencheListVieOrcamentos(ListView listView)
         {
-            BancodeDados bancodedados = new BancodeDados();
+            OLDBancodeDados bancodedados = new OLDBancodeDados();
             try
             {
                 bancodedados.conectar();

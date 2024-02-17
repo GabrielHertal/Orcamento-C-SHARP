@@ -18,7 +18,7 @@ namespace Orçamento
         {
             InitializeComponent();
         }
-        BancodeDados bancodedados = new BancodeDados();
+        OLDBancodeDados bancodedados = new OLDBancodeDados();
         CarregarDados carregarDados = new CarregarDados();
         Formatar formatar = new Formatar();
         private string _valor;

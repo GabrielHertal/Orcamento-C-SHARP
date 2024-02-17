@@ -2,14 +2,14 @@
 
 namespace Orçamento
 {
-    public class BancodeDados
+    public class OLDBancodeDados
     {
         private string str_conexao;
         public FbConnection conexao = new FbConnection();
         public FbCommand comando = new FbCommand();
         public FbDataReader dados;
 
-        public BancodeDados()
+        public OLDBancodeDados()
         {
             str_conexao = @"User=SYSDBA;Password=masterkey;Database=C:\Users\Gabriel\Desktop\Projeto orçamento C#\Orçamento\bin\Debug\net8.0-windows\ORCAMENTO.FDB;DataSource=localhost;Port=3050;";
         }
