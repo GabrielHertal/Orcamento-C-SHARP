@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FirebirdSql.Data.FirebirdClient;
+using Orçamento.Data;
 
 namespace Orçamento
 {
@@ -18,11 +19,9 @@ namespace Orçamento
         {
             InitializeComponent();
         }
-        OLDBancodeDados bancodedados = new OLDBancodeDados();
         CarregarDados carregarDados = new CarregarDados();
         Formatar formatar = new Formatar();
         private string _valor;
-        //função preenche moeda textbox
         private void txt_valor_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!Char.IsDigit(e.KeyChar) && e.KeyChar != Convert.ToChar(Keys.Back))
@@ -85,24 +84,34 @@ namespace Orçamento
         {
             string servico = txt_servico.Text;
             string valorTexto = txt_valor.Text.Replace("R$", "").Replace(",", ".");
-            decimal valorservico = decimal.Parse(valorTexto, CultureInfo.InvariantCulture);
+            decimal valorservico;
+
+            if (!decimal.TryParse(valorTexto, NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-BR"), out valorservico))
+            {
+                MessageBox.Show("Valor do serviço inválido!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
             string descricao = txt_descricao.Text;
-            if (servico == "")
+            if (string.IsNullOrEmpty(servico))
             {
                 MessageBox.Show("Existem campos vazios, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
             }
-            else
+            using (var dbContext = new DbConnect())
             {
-                bancodedados.conectar();
-                string valorFormatado = valorservico.ToString(CultureInfo.InvariantCulture);
-                string sql = $"INSERT INTO servicos (nome_servico, preco_padrao, descricao) VALUES ('{servico}', '{valorFormatado}', '{descricao}')";
-                bancodedados.executar(sql);
-                bancodedados.desconectar();
-                carregarDados.PreencheListViewServicos(lv_servicos);
-                txt_descricao.Text = "";
-                txt_servico.Text = "";
-                txt_valor.Text = "R$ 0,00";
+                var novoServico = new servicos
+                {
+                    nome_servicos = servico,
+                    preco_padrao = valorservico,
+                    descricao = descricao
+                };
+                dbContext.servicos.Add(novoServico);
+                dbContext.SaveChanges();
             }
+            carregarDados.PreencheListViewServicos(lv_servicos);
+            txt_descricao.Text = "";
+            txt_servico.Text = "";
+            txt_valor.Text = "R$ 0,00";
         }
         private void btn_alterar_Click(object sender, EventArgs e)
         {
@@ -118,61 +127,74 @@ namespace Orçamento
         }
         private void btn_excluir_Click(object sender, EventArgs e)
         {
-            DialogResult resultado = MessageBox.Show("Deseja realmente excluir este serviço?!", "AVISO", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (resultado == DialogResult.No)
-            {
-                return;
-            }
-            else if (lv_servicos.SelectedItems.Count > 0)
-            {
-                int itemselecionado = lv_servicos.SelectedItems[0].Index;
-                int indiceselecionado = Convert.ToInt32(lv_servicos.Items[itemselecionado].Text);
-                bancodedados.conectar();
-                string sql = $"UPDATE servicos SET ativo = 2 WHERE id_servicos = @ID";
-                FbCommand comando = new FbCommand(sql, bancodedados.conexao);
-                comando.Parameters.AddWithValue("@ID", indiceselecionado);
-                comando.ExecuteNonQuery();
-                bancodedados.desconectar();
-                lv_servicos.Items.RemoveAt(itemselecionado);
-            }
-            else
+            if (lv_servicos.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Selecione um Serviço!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            DialogResult resultado = MessageBox.Show("Deseja realmente excluir este serviço?!", "AVISO", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (resultado == DialogResult.Yes)
+            {
+                int idServico = Convert.ToInt32(lv_servicos.SelectedItems[0].Text);
+                using (var dbContext = new DbConnect())
+                {
+                    var servicoParaExcluir = dbContext.servicos.FirstOrDefault(s => s.id_servicos == idServico && s.ativo != 2);
+
+                    if (servicoParaExcluir != null)
+                    {
+                        servicoParaExcluir.ativo = 2;
+                        dbContext.SaveChanges();
+                        lv_servicos.Items.Remove(lv_servicos.SelectedItems[0]);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Serviço não encontrado ou já está excluído!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
+                }
             }
         }
         private void btn_salvar_Click(object sender, EventArgs e)
         {
+            if (lv_servicos.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Selecione um Serviço na lista!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
             string servico = txt_servico.Text;
             string valorTexto = txt_valor.Text.Replace("R$", "").Replace(",", ".");
             decimal valorservico = decimal.Parse(valorTexto, CultureInfo.InvariantCulture);
             string descricao = txt_descricao.Text;
-            if (servico == "")
+            if (string.IsNullOrWhiteSpace(servico))
             {
-                MessageBox.Show("Existem campos vazios, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("O campo 'Serviço' não pode estar vazio!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
             }
-            else
+            int idServicoSelecionado = Convert.ToInt32(lv_servicos.SelectedItems[0].Text);
+            using (var dbContext = new DbConnect())
             {
-                bancodedados.conectar();
-                int itemselecionado = lv_servicos.SelectedItems[0].Index;
-                int indiceselecionado = Convert.ToInt32(lv_servicos.Items[itemselecionado].Text);
-                string valortexto = valorservico.ToString(CultureInfo.InvariantCulture);
-                string sql = $"UPDATE servicos SET nome_servico = '{servico}', preco_padrao = '{valortexto}', descricao = '{descricao}' WHERE id_servicos = @ID";
-                FbCommand comando = new FbCommand(sql, bancodedados.conexao);
-                comando.Parameters.AddWithValue("@ID", indiceselecionado);
-                comando.ExecuteNonQuery();
-                bancodedados.desconectar();
-                carregarDados.PreencheListViewServicos(lv_servicos);
-                txt_descricao.Text = "";
-                txt_servico.Text = "";
-                txt_valor.Text = "R$ 0,00";
+                var servicoParaAtualizar = dbContext.servicos.FirstOrDefault(s => s.id_servicos == idServicoSelecionado);
+                if (servicoParaAtualizar != null)
+                {
+                    servicoParaAtualizar.nome_servicos = servico;
+                    servicoParaAtualizar.preco_padrao = valorservico;
+                    servicoParaAtualizar.descricao = descricao;
+                    dbContext.SaveChanges();
+                    carregarDados.PreencheListViewServicos(lv_servicos);
+
+                    txt_descricao.Text = "";
+                    txt_servico.Text = "";
+                    txt_valor.Text = "R$ 0,00";
+                }
+                else
+                {
+                    MessageBox.Show("O Serviço selecionado não foi encontrado!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
         }
-
         private void txt_valor_TextChanged(object sender, EventArgs e)
         {
 
         }
-
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
 

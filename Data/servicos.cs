@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 
 namespace Orçamento.Data
 {
-    
-    public class clientes
+    public class servicos
     {
         [Key]
-        public int id_cliente { get; set; }
-        public string nome{ get; set; }
-        public string documento { get; set; }
-        public string contato { get; set; }
+        public int id_servicos  { get; set; }
+        public string nome_servicos { get; set; }
+        public decimal preco_padrao { get; set; }
+        public string descricao { get; set; }
         public int ativo { get; set; }
     }
 }

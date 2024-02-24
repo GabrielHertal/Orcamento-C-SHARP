@@ -1,3 +1,5 @@
+using Orçamento.Data;
+
 namespace Orçamento
 {
     public partial class Form_Menu : Form
@@ -34,7 +36,6 @@ namespace Orçamento
 
         private void btn_clientes_Click(object sender, EventArgs e)
         {
-            // Form_clientes formcliente = new Form_clientes();
             OpenChildForm(new Form_clientes());
         }
 

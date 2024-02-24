@@ -28,11 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            lv_clientes = new ListView();
-            ID = new ColumnHeader();
-            Nome = new ColumnHeader();
-            Documento = new ColumnHeader();
-            Contato = new ColumnHeader();
+            components = new System.ComponentModel.Container();
             txt_nome = new TextBox();
             label1 = new Label();
             label2 = new Label();
@@ -43,43 +39,15 @@
             btn_alterar = new Button();
             btn_excluir = new Button();
             btn_salvar = new Button();
+            dataGridView1 = new DataGridView();
+            idclienteDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            nomeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            documentoDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            contatoDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            clientesBindingSource = new BindingSource(components);
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)clientesBindingSource).BeginInit();
             SuspendLayout();
-            // 
-            // lv_clientes
-            // 
-            lv_clientes.Columns.AddRange(new ColumnHeader[] { ID, Nome, Documento, Contato });
-            lv_clientes.Font = new Font("Segoe UI", 10F);
-            lv_clientes.FullRowSelect = true;
-            lv_clientes.GridLines = true;
-            lv_clientes.Location = new Point(14, 215);
-            lv_clientes.Name = "lv_clientes";
-            lv_clientes.Size = new Size(676, 414);
-            lv_clientes.TabIndex = 0;
-            lv_clientes.UseCompatibleStateImageBehavior = false;
-            lv_clientes.View = View.Details;
-            // 
-            // ID
-            // 
-            ID.Text = "ID";
-            ID.Width = 49;
-            // 
-            // Nome
-            // 
-            Nome.Text = "NOME";
-            Nome.TextAlign = HorizontalAlignment.Center;
-            Nome.Width = 175;
-            // 
-            // Documento
-            // 
-            Documento.Text = "DOCUMENTO";
-            Documento.TextAlign = HorizontalAlignment.Center;
-            Documento.Width = 300;
-            // 
-            // Contato
-            // 
-            Contato.Text = "CONTATO";
-            Contato.TextAlign = HorizontalAlignment.Center;
-            Contato.Width = 150;
             // 
             // txt_nome
             // 
@@ -180,11 +148,63 @@
             btn_salvar.UseVisualStyleBackColor = true;
             btn_salvar.Click += btn_salvar_Click;
             // 
+            // dataGridView1
+            // 
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.AutoGenerateColumns = false;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { idclienteDataGridViewTextBoxColumn, nomeDataGridViewTextBoxColumn, documentoDataGridViewTextBoxColumn, contatoDataGridViewTextBoxColumn });
+            dataGridView1.DataSource = clientesBindingSource;
+            dataGridView1.Location = new Point(12, 204);
+            dataGridView1.MultiSelect = false;
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.Size = new Size(678, 425);
+            dataGridView1.TabIndex = 12;
+            // 
+            // idclienteDataGridViewTextBoxColumn
+            // 
+            idclienteDataGridViewTextBoxColumn.DataPropertyName = "id_cliente";
+            idclienteDataGridViewTextBoxColumn.HeaderText = "ID";
+            idclienteDataGridViewTextBoxColumn.Name = "idclienteDataGridViewTextBoxColumn";
+            idclienteDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // nomeDataGridViewTextBoxColumn
+            // 
+            nomeDataGridViewTextBoxColumn.DataPropertyName = "nome";
+            nomeDataGridViewTextBoxColumn.HeaderText = "NOME";
+            nomeDataGridViewTextBoxColumn.Name = "nomeDataGridViewTextBoxColumn";
+            nomeDataGridViewTextBoxColumn.ReadOnly = true;
+            nomeDataGridViewTextBoxColumn.Width = 200;
+            // 
+            // documentoDataGridViewTextBoxColumn
+            // 
+            documentoDataGridViewTextBoxColumn.DataPropertyName = "documento";
+            documentoDataGridViewTextBoxColumn.HeaderText = "DOCUMENTO";
+            documentoDataGridViewTextBoxColumn.Name = "documentoDataGridViewTextBoxColumn";
+            documentoDataGridViewTextBoxColumn.ReadOnly = true;
+            documentoDataGridViewTextBoxColumn.Width = 200;
+            // 
+            // contatoDataGridViewTextBoxColumn
+            // 
+            contatoDataGridViewTextBoxColumn.DataPropertyName = "contato";
+            contatoDataGridViewTextBoxColumn.HeaderText = "CONTATO";
+            contatoDataGridViewTextBoxColumn.Name = "contatoDataGridViewTextBoxColumn";
+            contatoDataGridViewTextBoxColumn.ReadOnly = true;
+            contatoDataGridViewTextBoxColumn.Width = 135;
+            // 
+            // clientesBindingSource
+            // 
+            clientesBindingSource.DataSource = typeof(Data.clientes);
+            // 
             // Form_clientes
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(704, 641);
+            Controls.Add(dataGridView1);
             Controls.Add(btn_salvar);
             Controls.Add(btn_excluir);
             Controls.Add(btn_alterar);
@@ -195,31 +215,32 @@
             Controls.Add(txt_documento);
             Controls.Add(label1);
             Controls.Add(txt_nome);
-            Controls.Add(lv_clientes);
             Name = "Form_clientes";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Clientes";
             Load += Form_clientes_Load;
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)clientesBindingSource).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private ListView lv_clientes;
         private TextBox txt_nome;
         private Label label1;
         private Label label2;
         private TextBox txt_documento;
         private Label label3;
         private MaskedTextBox masked_txt_contato;
-        private ColumnHeader ID;
-        private ColumnHeader Nome;
-        private ColumnHeader Documento;
-        private ColumnHeader Contato;
         private Button btn_novo;
         private Button btn_alterar;
         private Button btn_excluir;
         private Button btn_salvar;
+        private DataGridView dataGridView1;
+        private DataGridViewTextBoxColumn idclienteDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn nomeDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn documentoDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn contatoDataGridViewTextBoxColumn;
+        private BindingSource clientesBindingSource;
     }
 }

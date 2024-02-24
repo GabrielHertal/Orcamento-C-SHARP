@@ -1,143 +1,115 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
+using System.Windows.Forms;
+using Orçamento.Data;
 
 namespace Orçamento
 {
     public class CarregarDados
     {
-        OLDBancodeDados bancodedados = new OLDBancodeDados();
-        //preenche listview dos clientes
         public void PreencheListViewClientes(ListView listView)
         {
-            OLDBancodeDados bancodedados = new OLDBancodeDados();
             try
             {
-                bancodedados.conectar();
-                ListView listView1 = new ListView();
-                string sql = "SELECT * FROM clientes WHERE ativo = 1 ORDER BY id_cliente";
-                bancodedados.Consultar(sql);
-                listView.Items.Clear();
-                while (bancodedados.dados.Read())
+                using (var context = new DbConnect())
                 {
-                    ListViewItem item = new ListViewItem(bancodedados.dados["id_cliente"].ToString());
-                    item.SubItems.Add(bancodedados.dados["nome"].ToString());
-                    item.SubItems.Add(bancodedados.dados["documento"].ToString());
-                    item.SubItems.Add(bancodedados.dados["contato"].ToString());
-                    listView.Items.Add(item);
+                    listView.Items.Clear();
+                    foreach (var cliente in context.clientes.Where(c => c.ativo == 1).OrderBy(c => c.id_cliente))
+                    {
+                        ListViewItem item = new ListViewItem(cliente.id_cliente.ToString());
+                        item.SubItems.Add(cliente.nome);
+                        item.SubItems.Add(cliente.documento);
+                        item.SubItems.Add(cliente.contato);
+                        listView.Items.Add(item);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Erro ao carregar dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally
-            {
-                bancodedados.desconectar();
-            }
         }
-        //preenche o listview do servicos 
+
         public void PreencheListViewServicos(ListView listView)
         {
             try
             {
-                bancodedados.conectar();
-                ListView listview2 = new ListView();
-                string sql = "SELECT * FROM servicos WHERE ativo = 1 ORDER BY id_servicos";
-                bancodedados.Consultar(sql);
-                listView.Items.Clear();
-                while (bancodedados.dados.Read())
+                using (var context = new DbConnect())
                 {
-                    ListViewItem item = new ListViewItem(bancodedados.dados["id_servicos"].ToString());
-                    item.SubItems.Add(bancodedados.dados["nome_servico"].ToString());
-                    item.SubItems.Add(bancodedados.dados["preco_padrao"].ToString());
-                    item.SubItems.Add(bancodedados.dados["descricao"].ToString());
-                    listView.Items.Add(item);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Erro ao carregarr dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                bancodedados.desconectar();
-            }
-        }
-        public void PreencheComboBoxServicos(ComboBox comboBox)
-        {
-            try
-            {
-                bancodedados.conectar();
-                string sql = "SELECT * FROM servicos WHERE ativo = 1 ORDER BY id_servicos";
-                bancodedados.Consultar(sql);
-                comboBox.Items.Clear();
-
-                while (bancodedados.dados.Read())
-                {
-                    string item = bancodedados.dados["nome_servico"].ToString();
-                    comboBox.Items.Add(item);
-                }
-
-                bancodedados.desconectar();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro ao carregar dados: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-        public void PreencheComboboxClientes(ComboBox combobox)
-        {
-            try
-            {
-                bancodedados.conectar();
-                string sql = "SELECT * FROM clientes WHERE ativo = 1 ORDER BY id_cliente";
-                bancodedados.Consultar(sql);
-                combobox.Items.Clear();
-                while (bancodedados.dados.Read())
-                {
-                    string item = bancodedados.dados["nome"].ToString();
-                    int id = Convert.ToInt32(bancodedados.dados["id_cliente"].ToString());
-                    combobox.Items.Add(item);
-                }
-                bancodedados.desconectar();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro ao carregar dados: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-        public void PreencheListVieOrcamentos(ListView listView)
-        {
-            OLDBancodeDados bancodedados = new OLDBancodeDados();
-            try
-            {
-                bancodedados.conectar();
-                ListView listView1 = new ListView();
-                string sql = "SELECT * FROM orcamentos ORDER BY id_orcamento";
-                bancodedados.Consultar(sql);
-                listView.Items.Clear();
-                while (bancodedados.dados.Read())
-                {
-                    ListViewItem item = new ListViewItem(bancodedados.dados["id_orcamento"].ToString());
-                    item.SubItems.Add(bancodedados.dados["nome_orcamento"].ToString());
-                    DateTime dataInicio = DateTime.Parse(bancodedados.dados["data_inicio"].ToString());
-                    item.SubItems.Add(dataInicio.ToString("dd/MM/yyyy"));
-                    DateTime dataConclusao = DateTime.Parse(bancodedados.dados["data_conclusao"].ToString());
-                    item.SubItems.Add(dataConclusao.ToString("dd/MM/yyyy"));
-                    listView.Items.Add(item);
+                    listView.Items.Clear();
+                    foreach (var servico in context.servicos.Where(s => s.ativo == 1).OrderBy(s => s.id_servicos))
+                    {
+                        ListViewItem item = new ListViewItem(servico.id_servicos.ToString());
+                        item.SubItems.Add(servico.nome_servicos);
+                        item.SubItems.Add(servico.preco_padrao.ToString());
+                        item.SubItems.Add(servico.descricao);
+                        listView.Items.Add(item);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Erro ao carregar dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally
+        }
+
+        public void PreencheComboBoxServicos(ComboBox comboBox)
+        {
+            try
             {
-                bancodedados.desconectar();
+                using (var context = new DbConnect())
+                {
+                    comboBox.Items.Clear();
+                    foreach (var servico in context.servicos.Where(s => s.ativo == 1).OrderBy(s => s.id_servicos))
+                    {
+                        comboBox.Items.Add(servico.nome_servicos);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao carregar dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void PreencheComboBoxClientes(ComboBox comboBox)
+        {
+            try
+            {
+                using (var context = new DbConnect())
+                {
+                    comboBox.Items.Clear();
+                    foreach (var cliente in context.clientes.Where(c => c.ativo == 1).OrderBy(c => c.id_cliente))
+                    {
+                        comboBox.Items.Add(cliente.nome);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao carregar dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void PreencheListViewOrcamentos(ListView listView)
+        {
+            try
+            {
+                using (var context = new DbConnect())
+                {
+                    listView.Items.Clear();
+                    foreach (var orcamento in context.orcamento.OrderBy(o => o.id_orcamento))
+                    {
+                        ListViewItem item = new ListViewItem(orcamento.id_orcamento.ToString());
+                        item.SubItems.Add(orcamento.nome_orcamento);
+                        item.SubItems.Add(orcamento.data_inicio.ToString("dd/MM/yyyy"));
+                        item.SubItems.Add(orcamento.data_conclusao.ToString("dd/MM/yyyy"));
+                        listView.Items.Add(item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao carregar dados: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

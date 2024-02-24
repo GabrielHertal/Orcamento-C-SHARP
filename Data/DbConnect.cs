@@ -5,35 +5,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace Orçamento.Data
 {
-    public class Config
+    public class DbConnect : DbContext
     {
-        public string ConnectionString { get; set; }
-    }
-    public class DbConnect
-    {
-        private NpgsqlConnection connection;
-        private string connectionString;
+        public DbSet<clientes> clientes { get; set; }
+        public DbSet<servicos> servicos { get; set; }
+        public DbSet<orcamento> orcamento { get; set; }
+        public DbSet<item_orcamento> itemOrcamento { get; set; }
+        public DbSet<detalhes_orcamento> detalhesOrcamento { get; set; }
 
-        public DbConnect(string appsettings)
-        {
-            LoadConnectionString(appsettings);
-            connection = new NpgsqlConnection(connectionString);
-        }
-        private void LoadConnectionString(string appsettings)
-        {
-            try
-            {
-                string json = File.ReadAllText(appsettings);
-                Config config = JsonConvert.DeserializeObject<Config>(json);
-                connectionString = config.ConnectionString;
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show($"Erro ao carregar a string de conexão: {ex.Message}");
-            }
-        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => optionsBuilder.UseNpgsql("User Id=postgres.ueakmklebeudwwairprr;Password=elefantemarinho123;Server=aws-0-sa-east-1.pooler.supabase.com;Port=5432;Database=postgres;");
+       
+        
     }
 }
