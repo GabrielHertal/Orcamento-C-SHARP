@@ -46,7 +46,7 @@ namespace Orçamento
 
             using (var dbContext = new DbConnect())
             {
-                var servicoSelecionado = dbContext.servicos.FirstOrDefault(s => s.nome_servicos == servico);
+                var servicoSelecionado = dbContext.servicos.FirstOrDefault(s => s.nome_servico == servico);
                 if (servicoSelecionado != null)
                 {
                     if (ServicoJaAdicionado(servico))
@@ -56,7 +56,7 @@ namespace Orçamento
                     }
 
                     decimal precoPadrao = servicoSelecionado.preco_padrao;
-                    Servico novoServico = new Servico(servicoSelecionado.id_servicos, servicoSelecionado.nome_servicos, Convert.ToInt32(Convert.ToDecimal(tamanho)), precoPadrao);
+                    Servico novoServico = new Servico(servicoSelecionado.id_servicos, servicoSelecionado.nome_servico, Convert.ToInt32(Convert.ToDecimal(tamanho)), precoPadrao);
                     using (Form_ValoresServicos valoresservicos = new Form_ValoresServicos())
                     {
                         valoresservicos.ValorOriginal = novoServico.ValorTotal;
@@ -192,8 +192,8 @@ namespace Orçamento
         {
             string nomeorcamento = txt_nomeorcamento.Text;
             string cliente = cbx_cliente.Text;
-            DateTime i_data = dtp_inicio.Value;
-            DateTime f_data = dtp_conclusao.Value;
+            DateTime i_data = dtp_inicio.Value.ToUniversalTime();
+            DateTime f_data = dtp_conclusao.Value.ToUniversalTime();
             string localizacao = txt_localização.Text;
             string observacao = txt_observações.Text;
             string total_servicos = txt_total.Text.Replace("R$", "").Replace(",", ".");
@@ -204,7 +204,6 @@ namespace Orçamento
                 MessageBox.Show("Selecione um cliente ou adicione um serviço!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-
             using (var dbContext = new DbConnect())
             {
                 var clienteSelecionado = dbContext.clientes.FirstOrDefault(c => c.nome == cliente);
@@ -214,16 +213,16 @@ namespace Orçamento
                     return;
                 }
                 int id_cliente = clienteSelecionado.id_cliente;
-                var novoOrcamento = new orcamento
+                var novoOrcamento = new orcamentos
                 {
                     nome_orcamento = nomeorcamento,
                     localizacao = localizacao,
                     observacao = observacao,
                     data_inicio = i_data,
                     data_conclusao = f_data,
-                    fk_id_cliente = id_cliente
+                    fkid_cliente = id_cliente
                 };
-                dbContext.orcamento.Add(novoOrcamento);
+                dbContext.orcamentos.Add(novoOrcamento);
                 dbContext.SaveChanges();
                 int id_orcamento = novoOrcamento.id_orcamento;
                 foreach (ListViewItem item in lv_servicos.Items)
@@ -233,7 +232,6 @@ namespace Orçamento
                     string desconto_unit = item.SubItems[3].Text.Replace("R$", "").Replace(",", ".");
                     string acrescimo_unit = item.SubItems[4].Text.Replace("R$", "").Replace(",", ".");
                     string total_unit = item.SubItems[5].Text.Replace("R$", "").Replace(",", ".");
-
                     try
                     {
                         var novoItemOrcamento = new item_orcamento
@@ -251,7 +249,6 @@ namespace Orçamento
                         };
                         dbContext.itemOrcamento.Add(novoItemOrcamento);
                         dbContext.SaveChanges();
-
                         var detalhesOrcamento = new detalhes_orcamento
                         {
                             fk_id_cliente = id_cliente,
@@ -277,7 +274,6 @@ namespace Orçamento
                 txt_total.Text = "R$ 0,00";
                 carregarDados.PreencheListViewOrcamentos(lv_orcamentos);
             }
-
         }
         private void CalcularTotaisListView()
         {
@@ -328,7 +324,7 @@ namespace Orçamento
                 foreach (var itemOrcamento in itensOrcamento)
                 {
                     int id_servico = itemOrcamento.fk_id_servico;
-                    string nomeServico = itemOrcamento.servicos.nome_servicos;
+                    string nomeServico = itemOrcamento.servicos.nome_servico;
                     decimal tamanhoServico = itemOrcamento.tamanho;
                     decimal desconto_unit = itemOrcamento.desconto_unit;
                     decimal acrescimo_unit = itemOrcamento.acrescimo_unit;
@@ -344,7 +340,7 @@ namespace Orçamento
 
                     CalcularTotaisListView();
                 }
-                var orcamento = dbContext.orcamento
+                var orcamento = dbContext.orcamentos
                     .Where(o => o.id_orcamento == id_orcamento)
                     .Include(o => o.clientes)
                     .FirstOrDefault();
@@ -370,8 +366,8 @@ namespace Orçamento
 
             string nomeorcamento = txt_nomeorcamento.Text;
             string cliente = cbx_cliente.Text;
-            DateTime i_data = dtp_inicio.Value;
-            DateTime f_data = dtp_conclusao.Value;
+            DateTime i_data = dtp_inicio.Value.ToUniversalTime();
+            DateTime f_data = dtp_conclusao.Value.ToUniversalTime(); ;
             string localizacao = txt_localização.Text;
             string observacao = txt_observações.Text;
             int id_cliente = -1;
@@ -384,7 +380,7 @@ namespace Orçamento
                     id_cliente = clienteSelecionado.id_cliente;
                 }
 
-                var orcamento = dbContext.orcamento.FirstOrDefault(o => o.id_orcamento == id_orcamento);
+                var orcamento = dbContext.orcamentos.FirstOrDefault(o => o.id_orcamento == id_orcamento);
                 if (orcamento != null)
                 {
                     orcamento.nome_orcamento = nomeorcamento;
@@ -429,7 +425,6 @@ namespace Orçamento
             txt_acrescimo.Text = "R$ 0,00";
             txt_total.Text = "R$ 0,00";
             carregarDados.PreencheListViewOrcamentos(lv_orcamentos);
-
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Orçamento.Data
         
         [ForeignKey("orcamento")]
         public int fk_orcamento { get; set; }
-        public orcamento orcamento { get; set; }
+        public orcamentos orcamento { get; set; }
        
         [ForeignKey("servicos")]
         public int fk_id_servico { get; set; }

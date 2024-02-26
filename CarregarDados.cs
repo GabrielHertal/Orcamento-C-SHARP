@@ -39,7 +39,7 @@ namespace Orçamento
                     foreach (var servico in context.servicos.Where(s => s.ativo == 1).OrderBy(s => s.id_servicos))
                     {
                         ListViewItem item = new ListViewItem(servico.id_servicos.ToString());
-                        item.SubItems.Add(servico.nome_servicos);
+                        item.SubItems.Add(servico.nome_servico);
                         item.SubItems.Add(servico.preco_padrao.ToString());
                         item.SubItems.Add(servico.descricao);
                         listView.Items.Add(item);
@@ -61,7 +61,7 @@ namespace Orçamento
                     comboBox.Items.Clear();
                     foreach (var servico in context.servicos.Where(s => s.ativo == 1).OrderBy(s => s.id_servicos))
                     {
-                        comboBox.Items.Add(servico.nome_servicos);
+                        comboBox.Items.Add(servico.nome_servico);
                     }
                 }
             }
@@ -97,7 +97,7 @@ namespace Orçamento
                 using (var context = new DbConnect())
                 {
                     listView.Items.Clear();
-                    foreach (var orcamento in context.orcamento.OrderBy(o => o.id_orcamento))
+                    foreach (var orcamento in context.orcamentos.OrderBy(o => o.id_orcamento))
                     {
                         ListViewItem item = new ListViewItem(orcamento.id_orcamento.ToString());
                         item.SubItems.Add(orcamento.nome_orcamento);

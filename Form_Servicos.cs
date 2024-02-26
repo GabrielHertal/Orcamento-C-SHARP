@@ -101,7 +101,7 @@ namespace Orçamento
             {
                 var novoServico = new servicos
                 {
-                    nome_servicos = servico,
+                    nome_servico = servico,
                     preco_padrao = valorservico,
                     descricao = descricao
                 };
@@ -175,12 +175,11 @@ namespace Orçamento
                 var servicoParaAtualizar = dbContext.servicos.FirstOrDefault(s => s.id_servicos == idServicoSelecionado);
                 if (servicoParaAtualizar != null)
                 {
-                    servicoParaAtualizar.nome_servicos = servico;
+                    servicoParaAtualizar.nome_servico = servico;
                     servicoParaAtualizar.preco_padrao = valorservico;
                     servicoParaAtualizar.descricao = descricao;
                     dbContext.SaveChanges();
                     carregarDados.PreencheListViewServicos(lv_servicos);
-
                     txt_descricao.Text = "";
                     txt_servico.Text = "";
                     txt_valor.Text = "R$ 0,00";

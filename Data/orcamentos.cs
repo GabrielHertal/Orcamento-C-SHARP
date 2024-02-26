@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Orçamento.Data
 {
-    public class orcamento
+    public class orcamentos
     {
         [Key]
         public int id_orcamento { get; set; }
@@ -17,8 +17,9 @@ namespace Orçamento.Data
         public string observacao { get; set; }
         public DateTime data_inicio { get; set; }
         public DateTime data_conclusao  { get; set; }
+
         [ForeignKey("clientes")]
-        public int fk_id_cliente { get; set; }
+        public int fkid_cliente { get; set; }
         public clientes clientes { get; set; }
     }
 }

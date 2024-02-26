@@ -15,7 +15,7 @@ namespace Orçamento.Data
     {
         public DbSet<clientes> clientes { get; set; }
         public DbSet<servicos> servicos { get; set; }
-        public DbSet<orcamento> orcamento { get; set; }
+        public DbSet<orcamentos> orcamentos { get; set; }
         public DbSet<item_orcamento> itemOrcamento { get; set; }
         public DbSet<detalhes_orcamento> detalhesOrcamento { get; set; }
 

@@ -11,7 +11,7 @@ namespace Orçamento.Data
     {
         [Key]
         public int id_servicos  { get; set; }
-        public string nome_servicos { get; set; }
+        public string nome_servico { get; set; }
         public decimal preco_padrao { get; set; }
         public string descricao { get; set; }
         public int ativo { get; set; }
