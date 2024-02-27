@@ -80,10 +80,10 @@ namespace Orçamento
             carregarDados.PreencheListViewServicos(lv_servicos);
             WindowState = FormWindowState.Maximized;
         }
-        private void btn_novo_Click(object sender, EventArgs e)
+        private void btn_novo_Click(object sender, EventArgs e) //ver aqui 
         {
             string servico = txt_servico.Text;
-            string valorTexto = txt_valor.Text.Replace("R$", "").Replace(",", ".");
+            string valorTexto = txt_valor.Text.Replace("R$", "").Replace(",", "."); //ver aqui
             decimal valorservico;
 
             if (!decimal.TryParse(valorTexto, NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-BR"), out valorservico))

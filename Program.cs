@@ -1,5 +1,5 @@
 using Orçamento.Data;
-
+using System;
 namespace Orçamento
 { 
 
@@ -9,8 +9,10 @@ namespace Orçamento
         static void Main(string[] args)
         {
             using (var dbconnect = new DbConnect())
-            ApplicationConfiguration.Initialize();
-            Application.Run(new Form_Menu());
+            {
+                ApplicationConfiguration.Initialize();
+                Application.Run(new Form_Menu());
+            }
         }
     }
 }

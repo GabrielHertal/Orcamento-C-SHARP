@@ -8,25 +8,26 @@ using System.Threading.Tasks;
 
 namespace Orçamento.Data
 {
+    [Table("detalhes_orcamento")]
     public class detalhes_orcamento
     {
         [Key]
-        public int id_orcamento { get; set; }
+        public int id_detalhe { get; set; }
         
         [ForeignKey("clientes")]
         public int fk_id_cliente { get; set; }
         public clientes clientes { get; set; }
         
-        [ForeignKey("orcamento")]
+        [ForeignKey("orcamentos")]
         public int fk_orcamento { get; set; }
-        public orcamentos orcamento { get; set; }
+        public orcamentos orcamentos { get; set; }
        
         [ForeignKey("servicos")]
         public int fk_id_servico { get; set; }
         public servicos servicos { get; set; }
 
-        [ForeignKey("item_orcamento")]
-        public int fk_item_orcamento { get; set; }
-        public item_orcamento item_orcamento { get; set; }
+        [ForeignKey("itens_orcamento")]
+        public int fk_id_item_orcamento { get; set; }
+        public itens_orcamento itens_orcamento { get; set; }
     }
 }

@@ -196,83 +196,85 @@ namespace Orçamento
             DateTime f_data = dtp_conclusao.Value.ToUniversalTime();
             string localizacao = txt_localização.Text;
             string observacao = txt_observações.Text;
-            string total_servicos = txt_total.Text.Replace("R$", "").Replace(",", ".");
-            string acrescimototal = txt_acrescimo.Text.Replace("R$", "").Replace(",", ".");
-            string descontototal = txt_desconto.Text.Replace("R$", "").Replace(",", ".");
-            if (string.IsNullOrEmpty(cliente) || lv_servicos.Items.Count == 0)
+
+            if (string.IsNullOrEmpty(nomeorcamento) || string.IsNullOrEmpty(cliente) || lv_servicos.Items.Count == 0)
             {
-                MessageBox.Show("Selecione um cliente ou adicione um serviço!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Preencha todos os campos obrigatórios!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            using (var dbContext = new DbConnect())
+
+            try
             {
-                var clienteSelecionado = dbContext.clientes.FirstOrDefault(c => c.nome == cliente);
-                if (clienteSelecionado == null)
+                using (var dbContext = new DbConnect())
                 {
-                    MessageBox.Show("Cliente selecionado não existe no banco de dados!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
-                }
-                int id_cliente = clienteSelecionado.id_cliente;
-                var novoOrcamento = new orcamentos
-                {
-                    nome_orcamento = nomeorcamento,
-                    localizacao = localizacao,
-                    observacao = observacao,
-                    data_inicio = i_data,
-                    data_conclusao = f_data,
-                    fkid_cliente = id_cliente
-                };
-                dbContext.orcamentos.Add(novoOrcamento);
-                dbContext.SaveChanges();
-                int id_orcamento = novoOrcamento.id_orcamento;
-                foreach (ListViewItem item in lv_servicos.Items)
-                {
-                    int id_servico = Convert.ToInt32(item.SubItems[0].Text);
-                    decimal tamanho = Convert.ToDecimal(item.SubItems[2].Text, CultureInfo.GetCultureInfo("pt-BR"));
-                    string desconto_unit = item.SubItems[3].Text.Replace("R$", "").Replace(",", ".");
-                    string acrescimo_unit = item.SubItems[4].Text.Replace("R$", "").Replace(",", ".");
-                    string total_unit = item.SubItems[5].Text.Replace("R$", "").Replace(",", ".");
-                    try
+                    var clienteSelecionado = dbContext.clientes.FirstOrDefault(c => c.nome == cliente);
+                    if (clienteSelecionado == null)
                     {
-                        var novoItemOrcamento = new item_orcamento
+                        MessageBox.Show("Cliente selecionado não existe no banco de dados!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        return;
+                    }
+
+                    int id_cliente = clienteSelecionado.id_cliente;
+                    var novoOrcamento = new orcamentos
+                    {
+                        nome_orcamento = nomeorcamento,
+                        localizacao = localizacao,
+                        observacao = observacao,
+                        data_inicio = i_data,
+                        data_conclusao = f_data,
+                        fkid_cliente = id_cliente
+                    };
+                    dbContext.orcamentos.Add(novoOrcamento);
+                    dbContext.SaveChanges();
+                    int id_orcamento = novoOrcamento.id_orcamento;
+                    foreach (ListViewItem item in lv_servicos.Items)
+                    {
+                        int id_servico = Convert.ToInt32(item.SubItems[0].Text);
+                        decimal tamanho = Convert.ToDecimal(item.SubItems[2].Text, CultureInfo.GetCultureInfo("pt-BR"));
+                        decimal desconto_unit = Convert.ToDecimal(item.SubItems[3].Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR"));
+                        decimal acrescimo_unit = Convert.ToDecimal(item.SubItems[4].Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR"));
+                        decimal total_unit = Convert.ToDecimal(item.SubItems[5].Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR"));
+                        var novoItemOrcamento = new itens_orcamento
                         {
                             descricao = observacao,
                             tamanho = tamanho,
-                            total_servicos = Convert.ToDecimal(total_servicos),
-                            desconto_total = Convert.ToDecimal(descontototal),
-                            acrescimo_total = Convert.ToDecimal(acrescimototal),
-                            desconto_unit = Convert.ToDecimal(desconto_unit),
-                            acrescimo_unit = Convert.ToDecimal(acrescimo_unit),
-                            total_unit = Convert.ToDecimal(total_unit),
+                            total_servicos = total_unit,
+                            desconto_total = Convert.ToDecimal(txt_desconto.Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR")),
+                            acrescimo_total = Convert.ToDecimal(txt_acrescimo.Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR")),
+                            desconto_unit = desconto_unit,
+                            acrescimo_unit = acrescimo_unit,
+                            total_unit = total_unit,
                             fk_id_servico = id_servico,
-                            Fk_id_orcamento = id_orcamento
+                            fk_id_orcamento = id_orcamento
                         };
-                        dbContext.itemOrcamento.Add(novoItemOrcamento);
+                        dbContext.itens_Orcamentos.Add(novoItemOrcamento);
                         dbContext.SaveChanges();
-                        var detalhesOrcamento = new detalhes_orcamento
+                        var _detalhesOrcamento = new detalhes_orcamento
                         {
                             fk_id_cliente = id_cliente,
                             fk_orcamento = id_orcamento,
                             fk_id_servico = id_servico,
-                            fk_item_orcamento = novoItemOrcamento.id_item_orcamento
+                            fk_id_item_orcamento = novoItemOrcamento.id_item_orcamento
                         };
-                        dbContext.detalhesOrcamento.Add(detalhesOrcamento);
+                        dbContext.detalhesOrcamento.Add(_detalhesOrcamento);
                         dbContext.SaveChanges();
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Erro ao inserir item orcamento: {ex.Message}", "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    dbContext.SaveChanges();
+                    MessageBox.Show("Orçamento salvo com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    txt_nomeorcamento.Text = "";
+                    txt_localização.Text = "";
+                    txt_observações.Text = "";
+                    lv_servicos.Items.Clear();
+                    cbx_cliente.Text = "";
+                    txt_desconto.Text = "R$ 0,00";
+                    txt_acrescimo.Text = "R$ 0,00";
+                    txt_total.Text = "R$ 0,00";
+                    carregarDados.PreencheListViewOrcamentos(lv_orcamentos);
                 }
-                txt_nomeorcamento.Text = "";
-                txt_localização.Text = "";
-                txt_observações.Text = "";
-                lv_servicos.Items.Clear();
-                cbx_cliente.Text = "";
-                txt_desconto.Text = "R$ 0,00";
-                txt_acrescimo.Text = "R$ 0,00";
-                txt_total.Text = "R$ 0,00";
-                carregarDados.PreencheListViewOrcamentos(lv_orcamentos);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao salvar orçamento: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void CalcularTotaisListView()
@@ -316,8 +318,8 @@ namespace Orçamento
 
             using (var dbContext = new DbConnect())
             {
-                var itensOrcamento = dbContext.itemOrcamento
-                    .Where(io => io.Fk_id_orcamento == id_orcamento)
+                var itensOrcamento = dbContext.itens_Orcamentos
+                    .Where(io => io.fk_id_orcamento == id_orcamento)
                     .Include(io => io.servicos)
                     .ToList();
 
@@ -401,7 +403,7 @@ namespace Orçamento
                     decimal acrescimo_unit = Convert.ToDecimal(item.SubItems[4].Text.Replace("R$", "").Replace(",", "."));
                     decimal total_unit = Convert.ToDecimal(item.SubItems[5].Text.Replace("R$", "").Replace(",", "."));
                     
-                    var itemOrcamento = dbContext.itemOrcamento.FirstOrDefault(io => io.Fk_id_orcamento == id_orcamento && io.fk_id_servico == id_servico);
+                    var itemOrcamento = dbContext.itens_Orcamentos.FirstOrDefault(io => io.fk_id_orcamento == id_orcamento && io.fk_id_servico == id_servico);
                     if (itemOrcamento != null)
                     {
                         itemOrcamento.descricao = observacao;

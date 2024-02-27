@@ -13,7 +13,6 @@ namespace Orçamento.Function
         {
             using (var dbContext = new DbConnect())
             {
-                dataGridView.Rows.Clear();
                 var clientes = dbContext.clientes.ToList();
                 dataGridView.DataSource = clientes;
             }

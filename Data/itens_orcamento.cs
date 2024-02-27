@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Orçamento.Data
 {
-    public class item_orcamento
+    [Table("itens_orcamento")]
+    public class itens_orcamento
     {
         [Key]
         public int id_item_orcamento { get; set; }
@@ -21,9 +22,10 @@ namespace Orçamento.Data
         public decimal acrescimo_unit { get; set; }
         public decimal total_unit { get; set; }
 
-        [ForeignKey("orcamento")]
-        public int Fk_id_orcamento { get; set; }
-        public orcamentos orcamento { get; set; }
+        [ForeignKey("orcamentos")]
+        public int fk_id_orcamento { get; set; }
+        public orcamentos orcamentos { get; set; }
+
         [ForeignKey("servicos")]
         public int fk_id_servico { get; set; }
         public servicos servicos { get; set; }
