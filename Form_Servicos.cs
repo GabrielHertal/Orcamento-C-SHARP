@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using FirebirdSql.Data.FirebirdClient;
 using Orçamento.Data;
 
 namespace Orçamento
@@ -80,10 +79,15 @@ namespace Orçamento
             carregarDados.PreencheListViewServicos(lv_servicos);
             WindowState = FormWindowState.Maximized;
         }
-        private void btn_novo_Click(object sender, EventArgs e) //ver aqui 
+        private void btn_novo_Click(object sender, EventArgs e) 
         {
+            if (editar == true)
+            {
+                MessageBox.Show("Serviço já adicionado, clique em Salvar para fazer as alterações!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;    
+            }
             string servico = txt_servico.Text;
-            string valorTexto = txt_valor.Text.Replace("R$", "").Replace(",", "."); //ver aqui
+            string valorTexto = txt_valor.Text.Replace("R$", "");
             decimal valorservico;
 
             if (!decimal.TryParse(valorTexto, NumberStyles.Currency, CultureInfo.GetCultureInfo("pt-BR"), out valorservico))
@@ -113,8 +117,10 @@ namespace Orçamento
             txt_servico.Text = "";
             txt_valor.Text = "R$ 0,00";
         }
+        public bool editar = false;
         private void btn_alterar_Click(object sender, EventArgs e)
         {
+            editar = true;
             if (lv_servicos.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Selecione um serviço, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -139,7 +145,6 @@ namespace Orçamento
                 using (var dbContext = new DbConnect())
                 {
                     var servicoParaExcluir = dbContext.servicos.FirstOrDefault(s => s.id_servicos == idServico && s.ativo != 2);
-
                     if (servicoParaExcluir != null)
                     {
                         servicoParaExcluir.ativo = 2;
@@ -192,11 +197,9 @@ namespace Orçamento
         }
         private void txt_valor_TextChanged(object sender, EventArgs e)
         {
-
         }
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
-
         }
     }
 }

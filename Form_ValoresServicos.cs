@@ -22,7 +22,6 @@ namespace Orçamento
         public decimal descontototal;
         public decimal acrescimototal;
         public event Action<decimal, decimal, decimal> ValoresConfirmados;
-
         private void Form_ValoresServicos_Load(object sender, EventArgs e)
         {
         }
@@ -36,7 +35,6 @@ namespace Orçamento
             Acrescimo = Convert.ToDecimal(acrescimo);
             Desconto = Convert.ToDecimal(desconto);
             TotalFinal = Convert.ToDecimal(totalfinal);
-
             if (ValoresConfirmados != null)
             {
                 ValoresConfirmados.Invoke(ValorOriginal, Desconto, Acrescimo);
@@ -48,7 +46,6 @@ namespace Orçamento
         private decimal acrescimo;
         private decimal desconto;
         private decimal totalFinal;
-
         private void txt_acrescimo_Leave(object sender, EventArgs e)
         {
             formatavalor.TratarLeave(sender, e);

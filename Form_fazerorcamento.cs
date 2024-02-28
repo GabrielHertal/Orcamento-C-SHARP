@@ -22,12 +22,10 @@ namespace Orçamento
         }
         CarregarDados carregarDados = new CarregarDados();
         FormatarValor formatavalor = new FormatarValor();
-
         public decimal valortotaloriginal;
         public decimal descontototal;
         public decimal acrescimototal;
         private List<Servico> listaServicos = new List<Servico>();
-
         private void Form_fazerorcamento_Load(object sender, EventArgs e)
         {
             carregarDados.PreencheComboBoxServicos(cbx_serviço);
@@ -43,7 +41,6 @@ namespace Orçamento
                 MessageBox.Show("Informe o serviço e o tamanho!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-
             using (var dbContext = new DbConnect())
             {
                 var servicoSelecionado = dbContext.servicos.FirstOrDefault(s => s.nome_servico == servico);
@@ -54,7 +51,6 @@ namespace Orçamento
                         MessageBox.Show("Este serviço já foi adicionado!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         return;
                     }
-
                     decimal precoPadrao = servicoSelecionado.preco_padrao;
                     Servico novoServico = new Servico(servicoSelecionado.id_servicos, servicoSelecionado.nome_servico, Convert.ToInt32(Convert.ToDecimal(tamanho)), precoPadrao);
                     using (Form_ValoresServicos valoresservicos = new Form_ValoresServicos())
@@ -86,7 +82,6 @@ namespace Orçamento
                     MessageBox.Show("O serviço selecionado não existe no banco de dados!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
-
         }
         private void btn_remover_Click(object sender, EventArgs e)
         {
@@ -173,7 +168,6 @@ namespace Orçamento
         private void AtualizarTotalComDescontoOuAcrescimo()
         {
             decimal desconto, acrescimo;
-
             if (decimal.TryParse(txt_desconto.Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency,
                 CultureInfo.GetCultureInfo("pt-BR"), out desconto) &&
                 decimal.TryParse(txt_acrescimo.Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency,
@@ -190,19 +184,22 @@ namespace Orçamento
         }
         private void btn_finalizaorcamento_Click(object sender, EventArgs e)
         {
+            if (editar == true)
+            {
+                MessageBox.Show("Orçamento já criado, para Salvar as alteração clique em Atualizar Orçamento!", "AVISO", MessageBoxButtons.OK ,MessageBoxIcon.Exclamation);
+                return;
+            }
             string nomeorcamento = txt_nomeorcamento.Text;
             string cliente = cbx_cliente.Text;
             DateTime i_data = dtp_inicio.Value.ToUniversalTime();
             DateTime f_data = dtp_conclusao.Value.ToUniversalTime();
             string localizacao = txt_localização.Text;
             string observacao = txt_observações.Text;
-
             if (string.IsNullOrEmpty(nomeorcamento) || string.IsNullOrEmpty(cliente) || lv_servicos.Items.Count == 0)
             {
                 MessageBox.Show("Preencha todos os campos obrigatórios!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-
             try
             {
                 using (var dbContext = new DbConnect())
@@ -213,7 +210,6 @@ namespace Orçamento
                         MessageBox.Show("Cliente selecionado não existe no banco de dados!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         return;
                     }
-
                     int id_cliente = clienteSelecionado.id_cliente;
                     var novoOrcamento = new orcamentos
                     {
@@ -231,16 +227,16 @@ namespace Orçamento
                     {
                         int id_servico = Convert.ToInt32(item.SubItems[0].Text);
                         decimal tamanho = Convert.ToDecimal(item.SubItems[2].Text, CultureInfo.GetCultureInfo("pt-BR"));
-                        decimal desconto_unit = Convert.ToDecimal(item.SubItems[3].Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR"));
-                        decimal acrescimo_unit = Convert.ToDecimal(item.SubItems[4].Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR"));
-                        decimal total_unit = Convert.ToDecimal(item.SubItems[5].Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR"));
+                        decimal desconto_unit = Convert.ToDecimal(item.SubItems[3].Text.Replace("R$", ""), CultureInfo.GetCultureInfo("pt-BR"));
+                        decimal acrescimo_unit = Convert.ToDecimal(item.SubItems[4].Text.Replace("R$", ""), CultureInfo.GetCultureInfo("pt-BR"));
+                        decimal total_unit = Convert.ToDecimal(item.SubItems[5].Text.Replace("R$", ""), CultureInfo.GetCultureInfo("pt-BR"));
                         var novoItemOrcamento = new itens_orcamento
                         {
                             descricao = observacao,
                             tamanho = tamanho,
                             total_servicos = total_unit,
-                            desconto_total = Convert.ToDecimal(txt_desconto.Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR")),
-                            acrescimo_total = Convert.ToDecimal(txt_acrescimo.Text.Replace("R$", "").Replace(",", "."), CultureInfo.GetCultureInfo("pt-BR")),
+                            desconto_total = Convert.ToDecimal(txt_desconto.Text.Replace("R$", ""), CultureInfo.GetCultureInfo("pt-BR")),
+                            acrescimo_total = Convert.ToDecimal(txt_acrescimo.Text.Replace("R$", ""), CultureInfo.GetCultureInfo("pt-BR")),
                             desconto_unit = desconto_unit,
                             acrescimo_unit = acrescimo_unit,
                             total_unit = total_unit,
@@ -259,7 +255,6 @@ namespace Orçamento
                         dbContext.detalhesOrcamento.Add(_detalhesOrcamento);
                         dbContext.SaveChanges();
                     }
-                    dbContext.SaveChanges();
                     MessageBox.Show("Orçamento salvo com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     txt_nomeorcamento.Text = "";
                     txt_localização.Text = "";
@@ -315,14 +310,12 @@ namespace Orçamento
             }
             id_orcamento = Convert.ToInt32(lv_orcamentos.Items[lv_orcamentos.SelectedIndices[0]].SubItems[0].Text);
             lv_servicos.Items.Clear();
-
             using (var dbContext = new DbConnect())
             {
                 var itensOrcamento = dbContext.itens_Orcamentos
                     .Where(io => io.fk_id_orcamento == id_orcamento)
                     .Include(io => io.servicos)
                     .ToList();
-
                 foreach (var itemOrcamento in itensOrcamento)
                 {
                     int id_servico = itemOrcamento.fk_id_servico;
@@ -331,7 +324,6 @@ namespace Orçamento
                     decimal desconto_unit = itemOrcamento.desconto_unit;
                     decimal acrescimo_unit = itemOrcamento.acrescimo_unit;
                     decimal total_unit = itemOrcamento.total_unit;
-
                     ListViewItem item = new ListViewItem(id_servico.ToString());
                     item.SubItems.Add(nomeServico);
                     item.SubItems.Add(tamanhoServico.ToString());
@@ -339,7 +331,6 @@ namespace Orçamento
                     item.SubItems.Add(acrescimo_unit.ToString("C2", CultureInfo.GetCultureInfo("pt-BR")));
                     item.SubItems.Add(total_unit.ToString("C2", CultureInfo.GetCultureInfo("pt-BR")));
                     lv_servicos.Items.Add(item);
-
                     CalcularTotaisListView();
                 }
                 var orcamento = dbContext.orcamentos
@@ -365,7 +356,6 @@ namespace Orçamento
                 MessageBox.Show("Selecione um orcamento e clique em Editar Orçamento!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-
             string nomeorcamento = txt_nomeorcamento.Text;
             string cliente = cbx_cliente.Text;
             DateTime i_data = dtp_inicio.Value.ToUniversalTime();
@@ -373,7 +363,6 @@ namespace Orçamento
             string localizacao = txt_localização.Text;
             string observacao = txt_observações.Text;
             int id_cliente = -1;
-
             using (var dbContext = new DbConnect())
             {
                 var clienteSelecionado = dbContext.clientes.FirstOrDefault(c => c.nome == cliente);
@@ -381,7 +370,6 @@ namespace Orçamento
                 {
                     id_cliente = clienteSelecionado.id_cliente;
                 }
-
                 var orcamento = dbContext.orcamentos.FirstOrDefault(o => o.id_orcamento == id_orcamento);
                 if (orcamento != null)
                 {
@@ -391,18 +379,14 @@ namespace Orçamento
                     orcamento.data_inicio = i_data;
                     orcamento.data_conclusao = f_data;
                 }
-
                 dbContext.SaveChanges();
-
-                // Atualiza os itens de orçamento
                 foreach (ListViewItem item in lv_servicos.Items)
                 {
                     int id_servico = Convert.ToInt32(item.SubItems[0].Text);
                     decimal tamanho = Convert.ToDecimal(item.SubItems[2].Text, CultureInfo.GetCultureInfo("pt-BR"));
-                    decimal desconto_unit = Convert.ToDecimal(item.SubItems[3].Text.Replace("R$", "").Replace(",", "."));
-                    decimal acrescimo_unit = Convert.ToDecimal(item.SubItems[4].Text.Replace("R$", "").Replace(",", "."));
-                    decimal total_unit = Convert.ToDecimal(item.SubItems[5].Text.Replace("R$", "").Replace(",", "."));
-                    
+                    decimal desconto_unit = Convert.ToDecimal(item.SubItems[3].Text.Replace("R$", ""));
+                    decimal acrescimo_unit = Convert.ToDecimal(item.SubItems[4].Text.Replace("R$", ""));
+                    decimal total_unit = Convert.ToDecimal(item.SubItems[5].Text.Replace("R$", ""));                    
                     var itemOrcamento = dbContext.itens_Orcamentos.FirstOrDefault(io => io.fk_id_orcamento == id_orcamento && io.fk_id_servico == id_servico);
                     if (itemOrcamento != null)
                     {

@@ -9,16 +9,15 @@ namespace Orçamento
     public partial class Form_clientes : Form
     {
         private readonly PreencheGridView preencherDataGridView = new PreencheGridView();
-
         public Form_clientes()
         {
             InitializeComponent();
         }
-
         private void Form_clientes_Load(object sender, EventArgs e)
         {
             WindowState = FormWindowState.Maximized;
             preencherDataGridView.Preencher(dataGridView1);
+            dataGridView1.SelectedRows[0].Selected = false;
         }
         VerificaCPF verificacpf = new VerificaCPF();
         private void btn_novo_Click(object sender, EventArgs e)
@@ -26,20 +25,17 @@ namespace Orçamento
             string nome = txt_nome.Text;
             string documento = txt_documento.Text;
             string contato = masked_txt_contato.Text;
-
             if (verificacpf.VerificaCpf(documento))
             {
                 MessageBox.Show("Documento já cadastrado no sistema, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LimparCampos();
                 return;
             }
-
             if (string.IsNullOrEmpty(nome) || string.IsNullOrEmpty(documento) || string.IsNullOrEmpty(contato))
             {
                 MessageBox.Show("Existem campos vazios, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-
             using (var context = new DbConnect())
             {
                 var novocliente = new clientes { nome = nome, contato = contato, documento = documento };
@@ -49,9 +45,10 @@ namespace Orçamento
             preencherDataGridView.Preencher(dataGridView1);
             LimparCampos();
         }
-
+        public bool editar = false;
         private void btn_alterar_Click(object sender, EventArgs e)
         {
+            editar = true;
             if (dataGridView1.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Selecione um Cliente!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -63,7 +60,6 @@ namespace Orçamento
             txt_documento.Text = dataGridView1.Rows[linha].Cells[2].Value.ToString();
             masked_txt_contato.Text = dataGridView1.Rows[linha].Cells[3].Value.ToString();
         }
-
         private void btn_excluir_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count == 0)
@@ -71,16 +67,14 @@ namespace Orçamento
                 MessageBox.Show("Selecione um cliente!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-
             int linhaselecioada = dataGridView1.SelectedRows[0].Index;
             int idCliente = Convert.ToInt32(dataGridView1.Rows[linhaselecioada].Cells[0].Value);
-
             using (var context = new DbConnect())
             {
                 var cliente = context.clientes.FirstOrDefault(c => c.id_cliente == idCliente);
                 if (cliente != null)
                 {
-                    cliente.ativo = 2; 
+                    cliente.ativo = 2;
                     context.SaveChanges();
                 }
                 preencherDataGridView.Preencher(dataGridView1);
@@ -88,25 +82,26 @@ namespace Orçamento
         }
         private void btn_salvar_Click(object sender, EventArgs e)
         {
+            if (editar == false)
+            {
+                MessageBox.Show("Selecione um orcamento e clique em Editar Orçamento!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
             string nome = txt_nome.Text;
             string documento = txt_documento.Text;
             string contato = masked_txt_contato.Text;
-
             if (string.IsNullOrEmpty(nome) || string.IsNullOrEmpty(documento) || string.IsNullOrEmpty(contato))
             {
                 MessageBox.Show("Existem campos vazios, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-
             if (dataGridView1.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Selecione um cliente para editar!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-
             int linhaSelecionada = dataGridView1.SelectedRows[0].Index;
             int idCliente = Convert.ToInt32(dataGridView1.Rows[linhaSelecionada].Cells[0].Value);
-
             using (var context = new DbConnect())
             {
                 var cliente = context.clientes.FirstOrDefault(c => c.id_cliente == idCliente);

@@ -1,8 +1,12 @@
 using Orçamento.Data;
 using System;
+using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+
 namespace Orçamento
 { 
-
     internal static class Program
     {
         [STAThread]
