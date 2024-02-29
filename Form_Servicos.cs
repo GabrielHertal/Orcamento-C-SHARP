@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Orçamento.Data;
+using Orçamento.Function;
 
 namespace Orçamento
 {
@@ -20,6 +21,7 @@ namespace Orçamento
         }
         CarregarDados carregarDados = new CarregarDados();
         Formatar formatar = new Formatar();
+        PreencheGridView preenchergrid = new PreencheGridView();
         private string _valor;
         private void txt_valor_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -76,7 +78,7 @@ namespace Orçamento
         }
         private void Form_Servicos_Load(object sender, EventArgs e)
         {
-            carregarDados.PreencheListViewServicos(lv_servicos);
+            preenchergrid.PreencherServico(dataGridView1);
             WindowState = FormWindowState.Maximized;
         }
         private void btn_novo_Click(object sender, EventArgs e) 
@@ -112,7 +114,7 @@ namespace Orçamento
                 dbContext.servicos.Add(novoServico);
                 dbContext.SaveChanges();
             }
-            carregarDados.PreencheListViewServicos(lv_servicos);
+            preenchergrid.PreencherServico(dataGridView1);
             txt_descricao.Text = "";
             txt_servico.Text = "";
             txt_valor.Text = "R$ 0,00";
@@ -121,19 +123,19 @@ namespace Orçamento
         private void btn_alterar_Click(object sender, EventArgs e)
         {
             editar = true;
-            if (lv_servicos.SelectedItems.Count == 0)
+            if (dataGridView1.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Selecione um serviço, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            int linha = lv_servicos.SelectedIndices[0];
-            txt_servico.Text = lv_servicos.Items[linha].SubItems[1].Text;
-            txt_valor.Text = lv_servicos.Items[linha].SubItems[2].Text;
-            txt_descricao.Text = lv_servicos.Items[linha].SubItems[3].Text;
+            int linha = dataGridView1.SelectedRows[0].Index;
+            txt_servico.Text = dataGridView1.Rows[linha].Cells[1].Value.ToString();
+            txt_valor.Text = "R$" + dataGridView1.Rows[linha].Cells[2].Value.ToString();
+            txt_descricao.Text = dataGridView1.Rows[linha].Cells[3].Value.ToString();
         }
         private void btn_excluir_Click(object sender, EventArgs e)
         {
-            if (lv_servicos.SelectedItems.Count == 0)
+            if (dataGridView1.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Selecione um Serviço!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
@@ -141,7 +143,7 @@ namespace Orçamento
             DialogResult resultado = MessageBox.Show("Deseja realmente excluir este serviço?!", "AVISO", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (resultado == DialogResult.Yes)
             {
-                int idServico = Convert.ToInt32(lv_servicos.SelectedItems[0].Text);
+                int idServico = Convert.ToInt32(dataGridView1.SelectedRows[0].Index);
                 using (var dbContext = new DbConnect())
                 {
                     var servicoParaExcluir = dbContext.servicos.FirstOrDefault(s => s.id_servicos == idServico && s.ativo != 2);
@@ -149,7 +151,7 @@ namespace Orçamento
                     {
                         servicoParaExcluir.ativo = 2;
                         dbContext.SaveChanges();
-                        lv_servicos.Items.Remove(lv_servicos.SelectedItems[0]);
+                        preenchergrid.PreencherServico(dataGridView1);
                     }
                     else
                     {
@@ -160,7 +162,7 @@ namespace Orçamento
         }
         private void btn_salvar_Click(object sender, EventArgs e)
         {
-            if (lv_servicos.SelectedItems.Count == 0)
+            if (dataGridView1.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Selecione um Serviço na lista!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
@@ -174,7 +176,7 @@ namespace Orçamento
                 MessageBox.Show("O campo 'Serviço' não pode estar vazio!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            int idServicoSelecionado = Convert.ToInt32(lv_servicos.SelectedItems[0].Text);
+            int idServicoSelecionado = Convert.ToInt32(dataGridView1.SelectedRows[0].Index);
             using (var dbContext = new DbConnect())
             {
                 var servicoParaAtualizar = dbContext.servicos.FirstOrDefault(s => s.id_servicos == idServicoSelecionado);
@@ -184,7 +186,7 @@ namespace Orçamento
                     servicoParaAtualizar.preco_padrao = valorservico;
                     servicoParaAtualizar.descricao = descricao;
                     dbContext.SaveChanges();
-                    carregarDados.PreencheListViewServicos(lv_servicos);
+                    preenchergrid.PreencherServico(dataGridView1);
                     txt_descricao.Text = "";
                     txt_servico.Text = "";
                     txt_valor.Text = "R$ 0,00";
@@ -194,6 +196,7 @@ namespace Orçamento
                     MessageBox.Show("O Serviço selecionado não foi encontrado!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
+            editar = false; 
         }
         private void txt_valor_TextChanged(object sender, EventArgs e)
         {

@@ -43,5 +43,18 @@ namespace Orçamento
         {
             OpenChildForm(new Form_fazerorcamento());
         }
+
+        private void btn_voltar_Click(object sender, EventArgs e)
+        {
+            if (currentForm != null)
+            {
+                currentForm.Close();
+                currentForm = null;
+            }
+        }
+        private void btn_orcamentos_Click(object sender, EventArgs e)
+        {
+            OpenChildForm(new Form_FastReport());
+        }
     }
 }

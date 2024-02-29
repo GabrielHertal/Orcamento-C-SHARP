@@ -31,6 +31,7 @@
             btn_clientes = new Button();
             btn_servicos = new Button();
             panel_lateral = new Panel();
+            btn_voltar = new Button();
             btn_orcamentos = new Button();
             btn_fazer_orcamentos = new Button();
             panel_logo = new Panel();
@@ -65,6 +66,7 @@
             // panel_lateral
             // 
             panel_lateral.BackColor = SystemColors.ActiveCaptionText;
+            panel_lateral.Controls.Add(btn_voltar);
             panel_lateral.Controls.Add(btn_orcamentos);
             panel_lateral.Controls.Add(btn_servicos);
             panel_lateral.Controls.Add(btn_fazer_orcamentos);
@@ -76,6 +78,18 @@
             panel_lateral.Size = new Size(250, 736);
             panel_lateral.TabIndex = 4;
             // 
+            // btn_voltar
+            // 
+            btn_voltar.Dock = DockStyle.Top;
+            btn_voltar.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btn_voltar.Location = new Point(0, 422);
+            btn_voltar.Name = "btn_voltar";
+            btn_voltar.Size = new Size(250, 84);
+            btn_voltar.TabIndex = 7;
+            btn_voltar.Text = "Voltar";
+            btn_voltar.UseVisualStyleBackColor = true;
+            btn_voltar.Click += btn_voltar_Click;
+            // 
             // btn_orcamentos
             // 
             btn_orcamentos.Dock = DockStyle.Top;
@@ -86,6 +100,7 @@
             btn_orcamentos.TabIndex = 5;
             btn_orcamentos.Text = "Orçamentos";
             btn_orcamentos.UseVisualStyleBackColor = true;
+            btn_orcamentos.Click += btn_orcamentos_Click;
             // 
             // btn_fazer_orcamentos
             // 
@@ -143,5 +158,6 @@
         private Button btn_fazer_orcamentos;
         private Button btn_orcamentos;
         private Panel panel_principal;
+        private Button btn_voltar;
     }
 }

@@ -16,8 +16,8 @@ namespace Orçamento.Function
         {
             using (var dbContext = new DbConnect())
             {
-                var existecliente = dbContext.clientes.Any(c => c.documento == documento);
-
+                var existecliente = dbContext.clientes
+                    .Any(c => c.documento == documento);
                 return existecliente;
             }
         }

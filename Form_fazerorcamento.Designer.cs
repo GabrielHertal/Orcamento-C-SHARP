@@ -399,7 +399,7 @@
             // 
             columnHeader2.Text = "ORÇAMENTO";
             columnHeader2.TextAlign = HorizontalAlignment.Center;
-            columnHeader2.Width = 485;
+            columnHeader2.Width = 475;
             // 
             // columnHeader3
             // 

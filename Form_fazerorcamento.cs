@@ -411,6 +411,7 @@ namespace Orçamento
             txt_acrescimo.Text = "R$ 0,00";
             txt_total.Text = "R$ 0,00";
             carregarDados.PreencheListViewOrcamentos(lv_orcamentos);
+            editar = false;
         }
     }
 }
