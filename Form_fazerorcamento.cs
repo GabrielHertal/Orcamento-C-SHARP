@@ -52,7 +52,7 @@ namespace Orçamento
                         return;
                     }
                     decimal precoPadrao = servicoSelecionado.preco_padrao;
-                    Servico novoServico = new Servico(servicoSelecionado.id_servicos, servicoSelecionado.nome_servico, Convert.ToInt32(Convert.ToDecimal(tamanho)), precoPadrao);
+                    Servico novoServico = new Servico(servicoSelecionado.id_servicos, servicoSelecionado.nome_servico, tamanho, precoPadrao);
                     using (Form_ValoresServicos valoresservicos = new Form_ValoresServicos())
                     {
                         valoresservicos.ValorOriginal = novoServico.ValorTotal;
@@ -226,13 +226,17 @@ namespace Orçamento
                     foreach (ListViewItem item in lv_servicos.Items)
                     {
                         int id_servico = Convert.ToInt32(item.SubItems[0].Text);
+                        var servico = dbContext.servicos.FirstOrDefault(s => s.id_servicos == id_servico);
+                        string descricaoServico = servico != null ? servico.descricao : "Descrição do serviço não encontrada";
+
+                        int _id_servico = Convert.ToInt32(item.SubItems[0].Text);
                         decimal tamanho = Convert.ToDecimal(item.SubItems[2].Text, CultureInfo.GetCultureInfo("pt-BR"));
                         decimal desconto_unit = Convert.ToDecimal(item.SubItems[3].Text.Replace("R$", ""), CultureInfo.GetCultureInfo("pt-BR"));
                         decimal acrescimo_unit = Convert.ToDecimal(item.SubItems[4].Text.Replace("R$", ""), CultureInfo.GetCultureInfo("pt-BR"));
                         decimal total_unit = Convert.ToDecimal(item.SubItems[5].Text.Replace("R$", ""), CultureInfo.GetCultureInfo("pt-BR"));
                         var novoItemOrcamento = new itens_orcamento
                         {
-                            descricao = observacao,
+                            descricao = descricaoServico, 
                             tamanho = tamanho,
                             total_servicos = total_unit,
                             desconto_total = Convert.ToDecimal(txt_desconto.Text.Replace("R$", ""), CultureInfo.GetCultureInfo("pt-BR")),
@@ -240,7 +244,7 @@ namespace Orçamento
                             desconto_unit = desconto_unit,
                             acrescimo_unit = acrescimo_unit,
                             total_unit = total_unit,
-                            fk_id_servico = id_servico,
+                            fk_id_servico = _id_servico,
                             fk_id_orcamento = id_orcamento
                         };
                         dbContext.itens_Orcamentos.Add(novoItemOrcamento);
@@ -249,7 +253,7 @@ namespace Orçamento
                         {
                             fk_id_cliente = id_cliente,
                             fk_orcamento = id_orcamento,
-                            fk_id_servico = id_servico,
+                            fk_id_servico = _id_servico,
                             fk_id_item_orcamento = novoItemOrcamento.id_item_orcamento
                         };
                         dbContext.detalhesOrcamento.Add(_detalhesOrcamento);

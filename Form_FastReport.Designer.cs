@@ -28,15 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_FastReport));
             SuspendLayout();
             // 
             // Form_FastReport
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            resources.ApplyResources(this, "$this");
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
             Name = "Form_FastReport";
-            Text = "Form_FastReport";
             Load += Form_FastReport_Load;
             ResumeLayout(false);
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,12 +15,12 @@ namespace Orçamento
         public decimal PrecoPadrao { get; set; }
         public decimal Desconto { get; set; }
         public decimal Acrescimo { get; set; }
-        public decimal ValorTotal => Tamanho * PrecoPadrao;
-        public Servico(int id, string nome, decimal tamanho, decimal precoPadrao)
+        public decimal ValorTotal => PrecoPadrao * Tamanho;
+        public Servico(int id, string nome, string tamanhostring, decimal precoPadrao)
         {
             Id = id;
             Nome = nome;
-            Tamanho = tamanho;
+            Tamanho = decimal.Parse(tamanhostring, CultureInfo.InvariantCulture);
             PrecoPadrao = precoPadrao;
         }
         public void AtualizarTotal()

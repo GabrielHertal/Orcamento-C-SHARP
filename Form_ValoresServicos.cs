@@ -117,9 +117,9 @@ namespace Orçamento
         private void AtualizarTotalComDescontoOuAcrescimo()
         {
             decimal desconto, acrescimo;
-            if (decimal.TryParse(txt_desconto.Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency,
+            if (decimal.TryParse(txt_desconto.Text.Replace("R$", ""), NumberStyles.Currency,
                 CultureInfo.GetCultureInfo("pt-BR"), out desconto) &&
-                decimal.TryParse(txt_acrescimo.Text.Replace("R$", "").Replace(".", ","), NumberStyles.Currency,
+                decimal.TryParse(txt_acrescimo.Text.Replace("R$", ""), NumberStyles.Currency,
                 CultureInfo.GetCultureInfo("pt-BR"), out acrescimo))
             {
                 decimal total = ValorOriginal - desconto + acrescimo;

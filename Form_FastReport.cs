@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using FastReport.Design;
 using Newtonsoft.Json;
+using FastReport;
 
 namespace Orçamento
 {
@@ -21,7 +22,7 @@ namespace Orçamento
 
         private void Form_FastReport_Load(object sender, EventArgs e)
         {
-
+         //   Report report = new Report();
         }
     }
 }
