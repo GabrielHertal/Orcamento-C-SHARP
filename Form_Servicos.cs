@@ -176,7 +176,7 @@ namespace Orçamento
                 MessageBox.Show("O campo 'Serviço' não pode estar vazio!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            int idServicoSelecionado = Convert.ToInt32(dataGridView1.SelectedRows[0].Index);
+            int idServicoSelecionado = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value);
             using (var dbContext = new DbConnect())
             {
                 var servicoParaAtualizar = dbContext.servicos.FirstOrDefault(s => s.id_servicos == idServicoSelecionado);
