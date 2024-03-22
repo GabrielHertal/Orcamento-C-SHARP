@@ -39,7 +39,7 @@ namespace Orçamento
         {
             OpenChildForm(new Form_Servicos());
         }
-        private void btn_fazer_orcamentos_Click(object sender, EventArgs e)
+        public void btn_fazer_orcamentos_Click(object sender, EventArgs e)
         {
             OpenChildForm(new Form_fazerorcamento());
         }
@@ -54,7 +54,7 @@ namespace Orçamento
         }
         private void btn_orcamentos_Click(object sender, EventArgs e)
         {
-            OpenChildForm(new Form_FastReport());
+            //OpenChildForm(new Form_FastReport());
         }
     }
 }

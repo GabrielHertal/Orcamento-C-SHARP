@@ -264,7 +264,7 @@ namespace Orçamento
                     txt_localização.Text = "";
                     txt_observações.Text = "";
                     lv_servicos.Items.Clear();
-                    cbx_cliente.Text = "";
+                    cbx_cliente.SelectedItem = null;
                     txt_desconto.Text = "R$ 0,00";
                     txt_acrescimo.Text = "R$ 0,00";
                     txt_total.Text = "R$ 0,00";

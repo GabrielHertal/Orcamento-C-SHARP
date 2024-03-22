@@ -41,16 +41,16 @@
             btn_salvar = new Button();
             panel1 = new Panel();
             dataGridView1 = new DataGridView();
-            servicoBindingSource = new BindingSource(components);
-            servicosBindingSource = new BindingSource(components);
             idservicosDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             nomeservicoDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             precopadraoDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             descricaoDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            servicosBindingSource = new BindingSource(components);
+            servicoBindingSource = new BindingSource(components);
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)servicoBindingSource).BeginInit();
             ((System.ComponentModel.ISupportInitialize)servicosBindingSource).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)servicoBindingSource).BeginInit();
             SuspendLayout();
             // 
             // txt_servico
@@ -181,29 +181,24 @@
             // dataGridView1
             // 
             dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.AutoGenerateColumns = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { idservicosDataGridViewTextBoxColumn, nomeservicoDataGridViewTextBoxColumn, precopadraoDataGridViewTextBoxColumn, descricaoDataGridViewTextBoxColumn });
             dataGridView1.DataSource = servicosBindingSource;
             dataGridView1.Location = new Point(7, 203);
             dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(678, 426);
             dataGridView1.TabIndex = 13;
-            // 
-            // servicoBindingSource
-            // 
-            servicoBindingSource.DataSource = typeof(Servico);
-            // 
-            // servicosBindingSource
-            // 
-            servicosBindingSource.DataSource = typeof(Data.servicos);
             // 
             // idservicosDataGridViewTextBoxColumn
             // 
             idservicosDataGridViewTextBoxColumn.DataPropertyName = "id_servicos";
             idservicosDataGridViewTextBoxColumn.HeaderText = "ID";
             idservicosDataGridViewTextBoxColumn.Name = "idservicosDataGridViewTextBoxColumn";
+            idservicosDataGridViewTextBoxColumn.ReadOnly = true;
             idservicosDataGridViewTextBoxColumn.Width = 30;
             // 
             // nomeservicoDataGridViewTextBoxColumn
@@ -211,6 +206,7 @@
             nomeservicoDataGridViewTextBoxColumn.DataPropertyName = "nome_servico";
             nomeservicoDataGridViewTextBoxColumn.HeaderText = "NOME SERVICO";
             nomeservicoDataGridViewTextBoxColumn.Name = "nomeservicoDataGridViewTextBoxColumn";
+            nomeservicoDataGridViewTextBoxColumn.ReadOnly = true;
             nomeservicoDataGridViewTextBoxColumn.Width = 300;
             // 
             // precopadraoDataGridViewTextBoxColumn
@@ -218,13 +214,23 @@
             precopadraoDataGridViewTextBoxColumn.DataPropertyName = "preco_padrao";
             precopadraoDataGridViewTextBoxColumn.HeaderText = "VALOR";
             precopadraoDataGridViewTextBoxColumn.Name = "precopadraoDataGridViewTextBoxColumn";
+            precopadraoDataGridViewTextBoxColumn.ReadOnly = true;
             // 
             // descricaoDataGridViewTextBoxColumn
             // 
             descricaoDataGridViewTextBoxColumn.DataPropertyName = "descricao";
             descricaoDataGridViewTextBoxColumn.HeaderText = "DESCRICAO";
             descricaoDataGridViewTextBoxColumn.Name = "descricaoDataGridViewTextBoxColumn";
+            descricaoDataGridViewTextBoxColumn.ReadOnly = true;
             descricaoDataGridViewTextBoxColumn.Width = 250;
+            // 
+            // servicosBindingSource
+            // 
+            servicosBindingSource.DataSource = typeof(Data.servicos);
+            // 
+            // servicoBindingSource
+            // 
+            servicoBindingSource.DataSource = typeof(Servico);
             // 
             // Form_Servicos
             // 
@@ -238,8 +244,8 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)servicoBindingSource).EndInit();
             ((System.ComponentModel.ISupportInitialize)servicosBindingSource).EndInit();
+            ((System.ComponentModel.ISupportInitialize)servicoBindingSource).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }

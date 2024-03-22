@@ -25,12 +25,29 @@ namespace Orçamento
             string nome = txt_nome.Text;
             string documento = txt_documento.Text;
             string contato = masked_txt_contato.Text;
-            if(editar == true)
+            if (editar == true)
             {
                 MessageBox.Show("Cliente já adicionado, clique em Salvar para fazer as alterações!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            if (verificacpf.VerificaCpf(documento))
+            if (documento.Length == 11)
+            {
+                if (!CPF.IsValidCpf(documento))
+                {
+                    MessageBox.Show("CPF inválido, insira um CPF válido!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+            }
+                else
+                {
+                    if (!CNPJ.IsValidCnpj(documento))
+                    {
+                        MessageBox.Show("CNPJ inválido, insira um CNPJ válido!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        return;
+                    }
+                }
+
+            if (verificacpf.VerificaCpfDB(documento))
             {
                 MessageBox.Show("Documento já cadastrado no sistema, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;

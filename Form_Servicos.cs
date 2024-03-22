@@ -162,6 +162,14 @@ namespace Orçamento
         }
         private void btn_salvar_Click(object sender, EventArgs e)
         {
+            if (editar == false)
+            {
+                MessageBox.Show("Selecione um Serviço e clique em Editar Serviço!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                txt_descricao.Text = "";
+                txt_servico.Text = "";
+                txt_valor.Text = "R$ 0,00";
+                return;
+            }
             if (dataGridView1.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Selecione um Serviço na lista!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);

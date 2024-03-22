@@ -12,7 +12,7 @@ namespace Orçamento.Function
 {
     public class VerificaCPF
     {
-        public bool VerificaCpf(string documento)
+        public bool VerificaCpfDB(string documento)
         {
             using (var dbContext = new DbConnect())
             {
