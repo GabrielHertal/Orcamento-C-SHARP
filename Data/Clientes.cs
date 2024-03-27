@@ -16,5 +16,10 @@ namespace Orçamento.Data
         public string documento { get; set; }
         public string contato { get; set; }
         public int ativo { get; set; }
+        public string rua { get; set; }
+        public string bairro { get; set; }
+        public string cidade { get; set; }
+        public string uf { get; set; }
+        public string cep { get; set; }
     }
 }

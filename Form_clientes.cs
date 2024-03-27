@@ -2,7 +2,10 @@
 using Orçamento.Function;
 using System;
 using System.Linq;
+using System.Net.Http;
+using Newtonsoft.Json;
 using System.Windows.Forms;
+using Microsoft.EntityFrameworkCore;
 
 namespace Orçamento
 {
@@ -17,7 +20,6 @@ namespace Orçamento
         {
             WindowState = FormWindowState.Maximized;
             preencherDataGridView.Preencher(dataGridView1);
-            dataGridView1.SelectedRows[0].Selected = false;
         }
         VerificaCPF verificacpf = new VerificaCPF();
         private void btn_novo_Click(object sender, EventArgs e)
@@ -25,6 +27,12 @@ namespace Orçamento
             string nome = txt_nome.Text;
             string documento = txt_documento.Text;
             string contato = masked_txt_contato.Text;
+            string rua = txt_rua.Text;
+            string bairro = txt_bairro.Text;
+            string cidade = txt_cidade.Text;
+            string uf = txt_uf.Text;
+            string CEP = txt_cep.Text;
+
             if (editar == true)
             {
                 MessageBox.Show("Cliente já adicionado, clique em Salvar para fazer as alterações!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -38,14 +46,14 @@ namespace Orçamento
                     return;
                 }
             }
-                else
+            else
+            {
+                if (!CNPJ.IsValidCnpj(documento))
                 {
-                    if (!CNPJ.IsValidCnpj(documento))
-                    {
-                        MessageBox.Show("CNPJ inválido, insira um CNPJ válido!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                        return;
-                    }
+                    MessageBox.Show("CNPJ inválido, insira um CNPJ válido!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
                 }
+            }
 
             if (verificacpf.VerificaCpfDB(documento))
             {
@@ -59,9 +67,18 @@ namespace Orçamento
             }
             using (var context = new DbConnect())
             {
-                var novocliente = new clientes { nome = nome, contato = contato, documento = documento };
-                context.clientes.Add(novocliente);
-                context.SaveChanges();
+                    var novocliente = new clientes 
+                    { 
+                        nome = nome, 
+                        contato = contato, 
+                        documento = documento, 
+                        rua = rua, 
+                        bairro = bairro, 
+                        cidade = cidade, uf = uf, 
+                        cep = CEP 
+                    };
+                    context.clientes.Add(novocliente);
+                    context.SaveChanges();
             }
             preencherDataGridView.Preencher(dataGridView1);
             LimparCampos();
@@ -77,9 +94,26 @@ namespace Orçamento
             }
 
             int linha = dataGridView1.SelectedRows[0].Index;
-            txt_nome.Text = dataGridView1.Rows[linha].Cells[1].Value.ToString();
-            txt_documento.Text = dataGridView1.Rows[linha].Cells[2].Value.ToString();
-            masked_txt_contato.Text = dataGridView1.Rows[linha].Cells[3].Value.ToString();
+            int id = Convert.ToInt32(dataGridView1.Rows[linha].Cells[0].Value);
+            using (var context = new DbConnect())
+            {
+                var clienteselec = new DbConnect().clientes
+                                .Where(c => c.id_cliente == id)
+                                .FirstOrDefault();
+                if (clienteselec != null)
+                {
+                    string nome = clienteselec.nome;
+                    string documento = clienteselec.documento;
+                    string contato = clienteselec.contato;
+                    string rua = clienteselec.rua;
+                    string bairro = clienteselec.bairro;
+                    string cidade = clienteselec.cidade;
+                    string uf = clienteselec.uf;
+                    string cep = clienteselec.cep;
+                }
+            }
+            Form_editacliente fo_editacliente = new Form_editacliente();
+            fo_editacliente.ShowDialog();
         }
         private void btn_excluir_Click(object sender, EventArgs e)
         {
@@ -123,6 +157,11 @@ namespace Orçamento
             }
             int linhaSelecionada = dataGridView1.SelectedRows[0].Index;
             int idCliente = Convert.ToInt32(dataGridView1.Rows[linhaSelecionada].Cells[0].Value);
+            string rua = txt_rua.Text;
+            string bairro = txt_bairro.Text;
+            string cidade = txt_cidade.Text;
+            string uf = txt_uf.Text;
+            string cep = txt_cep.Text;
             using (var context = new DbConnect())
             {
                 var cliente = context.clientes.FirstOrDefault(c => c.id_cliente == idCliente);
@@ -131,6 +170,11 @@ namespace Orçamento
                     cliente.nome = nome;
                     cliente.documento = documento;
                     cliente.contato = contato;
+                    cliente.rua = rua;
+                    cliente.bairro = bairro;
+                    cliente.cidade = cidade;
+                    cliente.uf = uf;
+                    cliente.cep = cep;
                     context.SaveChanges();
                 }
                 preencherDataGridView.Preencher(dataGridView1);
@@ -144,6 +188,43 @@ namespace Orçamento
             txt_nome.Text = "";
             txt_documento.Text = "";
             masked_txt_contato.Text = "";
+            txt_rua.Text = "";
+            txt_bairro.Text = "";
+            txt_cidade.Text = "";
+            txt_uf.Text = "";
+            txt_cep.Text = "";
+        }
+
+        private async void btn_consultacep_Click(object sender, EventArgs e)
+        {
+            string CEP = txt_cep.Text;
+            string url = "https://viacep.com.br/ws/" + CEP + "/json/";
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responsebody = await response.Content.ReadAsStringAsync();
+
+                        dynamic jsonData = JsonConvert.DeserializeObject(responsebody);
+                        txt_rua.Text = jsonData.logradouro;
+                        txt_bairro.Text = jsonData.bairro;
+                        txt_cidade.Text = jsonData.localidade;
+                        txt_uf.Text = jsonData.uf;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Erro na requisição", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Erro!" + ex.Message, "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
     }
 }
