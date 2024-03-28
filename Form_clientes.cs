@@ -6,6 +6,8 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Windows.Forms;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.ConstrainedExecution;
+using System.Security.Cryptography;
 
 namespace Orçamento
 {
@@ -21,99 +23,15 @@ namespace Orçamento
             WindowState = FormWindowState.Maximized;
             preencherDataGridView.Preencher(dataGridView1);
         }
-        VerificaCPF verificacpf = new VerificaCPF();
+        VerificaCPF verificacpfdoc = new VerificaCPF();
         private void btn_novo_Click(object sender, EventArgs e)
         {
-            string nome = txt_nome.Text;
-            string documento = txt_documento.Text;
-            string contato = masked_txt_contato.Text;
-            string rua = txt_rua.Text;
-            string bairro = txt_bairro.Text;
-            string cidade = txt_cidade.Text;
-            string uf = txt_uf.Text;
-            string CEP = txt_cep.Text;
-
-            if (editar == true)
-            {
-                MessageBox.Show("Cliente já adicionado, clique em Salvar para fazer as alterações!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
-            if (documento.Length == 11)
-            {
-                if (!CPF.IsValidCpf(documento))
-                {
-                    MessageBox.Show("CPF inválido, insira um CPF válido!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
-                }
-            }
-            else
-            {
-                if (!CNPJ.IsValidCnpj(documento))
-                {
-                    MessageBox.Show("CNPJ inválido, insira um CNPJ válido!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
-                }
-            }
-
-            if (verificacpf.VerificaCpfDB(documento))
-            {
-                MessageBox.Show("Documento já cadastrado no sistema, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            if (string.IsNullOrEmpty(nome) || string.IsNullOrEmpty(documento) || string.IsNullOrEmpty(contato))
-            {
-                MessageBox.Show("Existem campos vazios, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
-            using (var context = new DbConnect())
-            {
-                    var novocliente = new clientes 
-                    { 
-                        nome = nome, 
-                        contato = contato, 
-                        documento = documento, 
-                        rua = rua, 
-                        bairro = bairro, 
-                        cidade = cidade, uf = uf, 
-                        cep = CEP 
-                    };
-                    context.clientes.Add(novocliente);
-                    context.SaveChanges();
-            }
-            preencherDataGridView.Preencher(dataGridView1);
-            LimparCampos();
+            Form_editacliente formEditaCliente = new Form_editacliente(null);
+            formEditaCliente.ShowDialog();
         }
-        public bool editar = false;
         private void btn_alterar_Click(object sender, EventArgs e)
         {
-            editar = true;
-            if (dataGridView1.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Selecione um Cliente!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
-
-            int linha = dataGridView1.SelectedRows[0].Index;
-            int id = Convert.ToInt32(dataGridView1.Rows[linha].Cells[0].Value);
-            using (var context = new DbConnect())
-            {
-                var clienteselec = new DbConnect().clientes
-                                .Where(c => c.id_cliente == id)
-                                .FirstOrDefault();
-                if (clienteselec != null)
-                {
-                    string nome = clienteselec.nome;
-                    string documento = clienteselec.documento;
-                    string contato = clienteselec.contato;
-                    string rua = clienteselec.rua;
-                    string bairro = clienteselec.bairro;
-                    string cidade = clienteselec.cidade;
-                    string uf = clienteselec.uf;
-                    string cep = clienteselec.cep;
-                }
-            }
-            Form_editacliente fo_editacliente = new Form_editacliente();
-            fo_editacliente.ShowDialog();
+            //não é mais utilizado foi substituido pela função private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         }
         private void btn_excluir_Click(object sender, EventArgs e)
         {
@@ -137,93 +55,47 @@ namespace Orçamento
         }
         private void btn_salvar_Click(object sender, EventArgs e)
         {
-            if (editar == false)
-            {
-                MessageBox.Show("Selecione um orcamento e clique em Editar Orçamento!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
-            string nome = txt_nome.Text;
-            string documento = txt_documento.Text;
-            string contato = masked_txt_contato.Text;
-            if (string.IsNullOrEmpty(nome) || string.IsNullOrEmpty(documento) || string.IsNullOrEmpty(contato))
-            {
-                MessageBox.Show("Existem campos vazios, verifique!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
-            if (dataGridView1.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Selecione um cliente para editar!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
-            int linhaSelecionada = dataGridView1.SelectedRows[0].Index;
-            int idCliente = Convert.ToInt32(dataGridView1.Rows[linhaSelecionada].Cells[0].Value);
-            string rua = txt_rua.Text;
-            string bairro = txt_bairro.Text;
-            string cidade = txt_cidade.Text;
-            string uf = txt_uf.Text;
-            string cep = txt_cep.Text;
-            using (var context = new DbConnect())
-            {
-                var cliente = context.clientes.FirstOrDefault(c => c.id_cliente == idCliente);
-                if (cliente != null)
-                {
-                    cliente.nome = nome;
-                    cliente.documento = documento;
-                    cliente.contato = contato;
-                    cliente.rua = rua;
-                    cliente.bairro = bairro;
-                    cliente.cidade = cidade;
-                    cliente.uf = uf;
-                    cliente.cep = cep;
-                    context.SaveChanges();
-                }
-                preencherDataGridView.Preencher(dataGridView1);
-            }
-            MessageBox.Show("Cliente alterado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            LimparCampos();
-            editar = false;
         }
-        private void LimparCampos()
-        {
-            txt_nome.Text = "";
-            txt_documento.Text = "";
-            masked_txt_contato.Text = "";
-            txt_rua.Text = "";
-            txt_bairro.Text = "";
-            txt_cidade.Text = "";
-            txt_uf.Text = "";
-            txt_cep.Text = "";
-        }
-
         private async void btn_consultacep_Click(object sender, EventArgs e)
         {
-            string CEP = txt_cep.Text;
-            string url = "https://viacep.com.br/ws/" + CEP + "/json/";
-
-            using (HttpClient client = new HttpClient())
+        }
+        private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
             {
-                try
+                MessageBox.Show("Selecione um Cliente!", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            int linha = dataGridView1.SelectedRows[0].Index;
+            verificacpfdoc.idlinha = Convert.ToInt32(dataGridView1.Rows[linha].Cells[0].Value);
+            string nome = null;
+            string documento = null;
+            string contato = null;
+            string rua = null;
+            string bairro = null;
+            string cidade = null;
+            string uf = null;
+            string cep = null;
+            using (var context = new DbConnect())
+            {
+                var clienteselec = new DbConnect().clientes
+                                .Where(c => c.id_cliente == verificacpfdoc.idlinha)
+                                .FirstOrDefault();
+                if (clienteselec != null)
                 {
-                    HttpResponseMessage response = await client.GetAsync(url);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responsebody = await response.Content.ReadAsStringAsync();
-
-                        dynamic jsonData = JsonConvert.DeserializeObject(responsebody);
-                        txt_rua.Text = jsonData.logradouro;
-                        txt_bairro.Text = jsonData.bairro;
-                        txt_cidade.Text = jsonData.localidade;
-                        txt_uf.Text = jsonData.uf;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Erro na requisição", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    }
+                    verificacpfdoc.idlinha = clienteselec.id_cliente;
+                    nome = clienteselec.nome;
+                    documento = clienteselec.documento;
+                    contato = clienteselec.contato;
+                    rua = clienteselec.rua;
+                    bairro = clienteselec.bairro;
+                    cidade = clienteselec.cidade;
+                    uf = clienteselec.uf;
+                    cep = clienteselec.cep;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Erro!" + ex.Message, "ERRO", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                Cliente cliente = new Cliente(verificacpfdoc.idlinha, nome, documento, contato, rua, bairro, cidade, uf, cep);
+                Form_editacliente fo_editacliente = new Form_editacliente(cliente);
+                fo_editacliente.ShowDialog();
             }
         }
     }

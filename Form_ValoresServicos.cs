@@ -18,7 +18,7 @@ namespace Orçamento
             InitializeComponent();
         }
         FormatarValor formatavalor = new FormatarValor();
-        Formatar formata = new Formatar();
+
         public decimal descontototal;
         public decimal acrescimototal;
         public event Action<decimal, decimal, decimal> ValoresConfirmados;

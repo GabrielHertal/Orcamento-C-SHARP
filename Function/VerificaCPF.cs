@@ -21,5 +21,6 @@ namespace Orçamento.Function
                 return existecliente;
             }
         }
+        public int idlinha;
     }
 }
